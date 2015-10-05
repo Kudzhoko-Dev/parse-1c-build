@@ -1,7 +1,7 @@
 ; Регистр имеет значение
 
 [General]
-1C=c:\Program Files (x86)\1cv8\8.3.6.2152\bin\1cv8.exe
+1C=c:\Program Files (x86)\1cv8\8.3.7.1633\bin\1cv8.exe
 IB=d:\_Работа\Инструменты\1С\Скрипты\ib\
 V8Reader=d:\_Работа\Инструменты\1С\Скрипты\v8Reader\V8Reader.epf
 V8Unpack=d:\_Работа\Инструменты\1С\Скрипты\v8Unpack\V8Unpack.exe

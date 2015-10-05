@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! python3
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
 from configparser import RawConfigParser

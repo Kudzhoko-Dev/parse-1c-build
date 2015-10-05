@@ -1,13 +1,11 @@
 #! python3
 # -*- coding: utf-8 -*-
-from argparse import ArgumentParser
 from pathlib import Path
 import tempfile
 import subprocess
 import sys
 
-from generic import Processor
-
+from decompiler1cwrapper.generic import Processor
 
 __version__ = '0.1.0'
 

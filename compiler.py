@@ -16,7 +16,7 @@ __version__ = '0.1.0'
 class Compiler(Processor):
     def __init__(self, settings_file_name: str=''):
         if not settings_file_name:
-            settings_file_name = 'settings.ini'
+            settings_file_name = 'decompiler-1c-wrapper.ini'
         super().__init__(settings_file_name)
 
         self.argparser.add_argument('input', nargs='?')
@@ -75,5 +75,5 @@ class Compiler(Processor):
 
 
 if __name__ == '__main__':
-    decompiler = Compiler('settings.ini')
+    decompiler = Compiler('decompiler-1c-wrapper.ini')
     sys.exit(decompiler.run())

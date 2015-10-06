@@ -1,14 +1,16 @@
-Утилиты для разборки (decompiling) и сборки (compiling) *epf*- и *erf*-файлов
+Пакет утилит для разборки (decompiling) и сборки (compiling) *epf*- и *erf*-файлов
 ===
 
 Что делает
 ---
 
-*epf*- и *erf*-файлы разбираются с помощью [v8Reader](https://github.com/xDrivenDevelopment/v8Reader), а собираются с 
-помощью v8Unpack.
+При установки пакета в папке скриптов каталога интерпретатора Python создаются исполняемые файлы *decompile1c.exe* и 
+*compile1c.exe*, первый используется для разборки *epf*- и *erf*-файлов с помощью 
+[v8Reader](https://github.com/xDrivenDevelopment/v8Reader), а второй для их сборки с помощью v8Unpack. 
 
 Пути к платформе 1С:Предприятие 8, сервисной информационной базе, *V8Reader.epf* и *V8Unpack.exe* указывается в файле 
-настроек *decompiler-1c-wrapper.ini*, который сначала ищется в текущем каталоге, а затем в каталоге с утилитами.
+настроек *decompiler1cwrapper.ini*, который сначала ищется в текущем каталоге, а затем в каталоге пользователя 
+(в Windows 10 каталог *C:\Users\<Пользователь>*).
 
 Требования
 ---
@@ -19,10 +21,3 @@
 - Сервисная информационная база (в которой будет запускаться *V8Reader.epf*)
 - [v8Reader](https://github.com/xDrivenDevelopment/v8Reader) и в частности *V8Reader.epf*
 - v8Unpack \( *V8Unpack.exe* \)
-
-Состав
----
-
-- *decompiler.py* — разборщик *epf*- и *erf*-файлов
-- *compiler.py* — сборщик *epf*- и *erf*-файлов
-- *decompiler-1c-wrapper.ini.sample* — образец файла с настройками

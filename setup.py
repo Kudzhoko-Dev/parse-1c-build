@@ -11,5 +11,12 @@ setup(
     packages=find_packages(),
 
     author='Cujoko',
-    author_email='cujoko@gmail.com'
+    author_email='cujoko@gmail.com',
+
+    entry_points={
+        'console_scripts': [
+            'decompile1c=decompiler1cwrapper.main:decompile',
+            'compile1c=decompiler1cwrapper.main:compile',
+        ]
+    }
 )

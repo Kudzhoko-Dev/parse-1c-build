@@ -1,4 +1,4 @@
-; Регистр имеет значение
+; Letter case matters
 
 [General]
 1C=c:\Program Files (x86)\1cv8\8.3.7.1633\bin\1cv8.exe

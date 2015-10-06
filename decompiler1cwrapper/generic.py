@@ -2,21 +2,17 @@
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
 from configparser import RawConfigParser
+import decompiler1cwrapper
 from pathlib import Path
-import tempfile
-import subprocess
-import sys
-
-
-__version__ = '0.2.0'
 
 
 class Processor():
     def __init__(self, settings_file_name: str):
         self.argparser = ArgumentParser()
-        self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(__version__))
-        self.argparser.add_argument('--debug', action='store_true', default=False, help='if this option exists then debug mode '
-                                                                                   'is enabled')
+        self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
+            decompiler1cwrapper.__version__))
+        self.argparser.add_argument('--debug', action='store_true', default=False,
+                                    help='if this option exists then debug mode is enabled')
 
         settings_file_path = Path(settings_file_name)
         if not settings_file_path.exists():

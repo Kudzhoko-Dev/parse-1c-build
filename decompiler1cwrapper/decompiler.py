@@ -1,19 +1,16 @@
 #! python3
 # -*- coding: utf-8 -*-
+from decompiler1cwrapper.generic import Processor
 from pathlib import Path
 import tempfile
 import subprocess
 import sys
 
-from decompiler1cwrapper.generic import Processor
-
-__version__ = '0.1.0'
-
 
 class Decompiler(Processor):
     def __init__(self, settings_file_name: str=''):
         if not settings_file_name:
-            settings_file_name = 'decompiler-1c-wrapper.ini'
+            settings_file_name = 'decompiler1cwrapper.ini'
         super().__init__(settings_file_name)
 
         self.argparser.add_argument('input', nargs='?')
@@ -61,5 +58,5 @@ class Decompiler(Processor):
 
 
 if __name__ == '__main__':
-    decompiler = Decompiler('decompiler-1c-wrapper.ini')
+    decompiler = Decompiler('decompiler1cwrapper.ini')
     sys.exit(decompiler.run())

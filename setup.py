@@ -16,7 +16,7 @@ setup(
     entry_points={
         'console_scripts': [
             'decompile1c=decompiler1cwrapper.main:decompile',
-            'compile1c=decompiler1cwrapper.main:compile',
+            'compile1c=decompiler1cwrapper.main:compile_',
         ]
     }
 )

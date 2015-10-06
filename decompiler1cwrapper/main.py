@@ -21,7 +21,7 @@ class Processor:
         if not settings_file_path.exists():
             settings_file_path = Path.home() / settings_file_path
             if not settings_file_path.exists():
-                raise SettingsError('Settings file does not exists!')
+                raise SettingsError('Settings file does not exist!')
 
         self.config = RawConfigParser()
         self.config.optionxform = lambda option: option
@@ -31,23 +31,23 @@ class Processor:
 
         self.exe_1c = Path(self.general_section['1C'])
         if not self.exe_1c.exists():
-            raise SettingsError('1C:Enterprise 8 does not exists!')
+            raise SettingsError('1C:Enterprise 8 does not exist!')
 
         self.ib = Path(self.general_section['IB'])
         if not self.ib.exists():
-            raise SettingsError('Service information base does not exists!')
+            raise SettingsError('Service information base does not exist!')
 
         self.v8_reader = Path(self.general_section['V8Reader'])
         if not self.v8_reader.exists():
-            raise SettingsError('V8Reader does not exists!')
+            raise SettingsError('V8Reader does not exist!')
 
         self.v8_unpack = Path(self.general_section['V8Unpack'])
         if not self.v8_unpack.exists():
-            raise SettingsError('V8Unpack does not exists!')
+            raise SettingsError('V8Unpack does not exist!')
 
         self.gcomp = Path(self.general_section['GComp'])
         if not self.gcomp.exists():
-            raise SettingsError('GComp does not exists!')
+            raise SettingsError('GComp does not exist!')
 
     def run(self):
         pass
@@ -176,7 +176,7 @@ def decompile():
     Decompiler().run()
 
 
-def compile():
+def compile_():
     # sys.path.append('C:\\Python35\\pycharm-debug-py3k.egg')
     #
     # import pydevd

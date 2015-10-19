@@ -1,8 +1,7 @@
 #! python3
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
-
 import decompiler1cwrapper
+from setuptools import setup, find_packages
 
 
 setup(
@@ -16,7 +15,7 @@ setup(
     entry_points={
         'console_scripts': [
             'decompile1c=decompiler1cwrapper.main:decompile',
-            'compile1c=decompiler1cwrapper.main:compile_',
+            'compile1c=decompiler1cwrapper.main:compile_'
         ]
     }
 )

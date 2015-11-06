@@ -1,12 +1,14 @@
 #! python3
 # -*- coding: utf-8 -*-
-from . import __version__
 from argparse import ArgumentParser
 from configparser import RawConfigParser
 from pathlib import Path
 import tempfile
 import shutil
 import subprocess
+
+
+__version__ = '0.2.8'
 
 
 class Processor:

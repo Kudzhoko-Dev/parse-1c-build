@@ -2,13 +2,62 @@
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
 from configparser import RawConfigParser
+import os
 from pathlib import Path
 import tempfile
+import re
 import shutil
 import subprocess
 
 
-__version__ = '0.2.8'
+__version__ = '1.0.0'
+
+pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
+
+
+def get_version_as_number(version: str):
+    result = 0
+    m = 10000
+    match = pattern_version.match(version)
+    if match is not None:
+        result = \
+            int(match.group(2)) * m ** 3 + \
+            int(match.group(3)) * m ** 2 + \
+            int(match.group(4)) * m + \
+            int(match.group(5))
+
+    return result
+
+
+def get_last_exe_1c():
+    result = None
+
+    all_users_profile_path = Path(os.getenv('ALLUSERSPROFILE'))
+    estart_path = all_users_profile_path / '1C'/ '1CEStart' / '1CEStart.cfg'
+    installed_location_paths = []
+    if estart_path.exists() and estart_path.is_file():
+        with estart_path.open(encoding='utf-16') as estart_file:
+            for line in estart_file.readlines():
+                key_and_value = line.split('=')
+                if key_and_value[0] == 'InstalledLocation':
+                    value = '='.join(key_and_value[1:])
+                    installed_location_paths.append(Path(value.rstrip()))
+
+        platform_versions = []
+        for installed_location_path in installed_location_paths:
+            if installed_location_path.exists() and installed_location_path.is_dir():
+                for p1 in installed_location_path.iterdir():
+                    version_as_number = get_version_as_number(str(p1.name))
+                    if version_as_number != 0:
+                        platform_versions.append((version_as_number, p1))
+
+        platform_versions1 = sorted(platform_versions, key=lambda x: x[0], reverse=True)
+        if platform_versions1:
+            result = platform_versions1[0][1]
+    else:
+        raise SettingsError('1CEStart.cfg file does not exist!')
+
+    return result
 
 
 class Processor:
@@ -20,9 +69,9 @@ class Processor:
                                     help='if this option exists then debug mode is enabled')
 
         settings_file_path = Path('decompiler1cwrapper.ini')
-        if not settings_file_path.exists():
+        if not settings_file_path.exists() or not settings_file_path.is_file():
             settings_file_path = Path.home() / settings_file_path
-            if not settings_file_path.exists():
+            if not settings_file_path.exists() or not settings_file_path.is_file():
                 raise SettingsError('Settings file does not exist!')
 
         self.config = RawConfigParser()
@@ -31,9 +80,10 @@ class Processor:
         self.general_section_name = 'General'
         self.general_section = self.config[self.general_section_name]
 
-        self.exe_1c = Path(self.general_section['1C'])
-        if not self.exe_1c.exists():
-            raise SettingsError('1C:Enterprise 8 does not exist!')
+        # self.exe_1c = Path(self.general_section['1C'])
+        # if not self.exe_1c.exists():
+        #     raise SettingsError('1C:Enterprise 8 does not exist!')
+        self.exe_1c = get_last_exe_1c()
 
         self.ib = Path(self.general_section['IB'])
         if not self.ib.exists():
@@ -185,3 +235,7 @@ def compile_():
     # pydevd.settrace(port=10050)
 
     Compiler().run()
+
+
+if __name__ == '__main__':
+    print(get_last_exe_1c())

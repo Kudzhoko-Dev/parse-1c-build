@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -49,7 +49,9 @@ def get_last_exe_1c():
                 for p1 in installed_location_path.iterdir():
                     version_as_number = get_version_as_number(str(p1.name))
                     if version_as_number != 0:
-                        platform_versions.append((version_as_number, p1))
+                        p2 = p1 / 'bin' / '1cv8.exe'
+                        if p2.exists() and p2.is_file():
+                            platform_versions.append((version_as_number, p2))
 
         platform_versions1 = sorted(platform_versions, key=lambda x: x[0], reverse=True)
         if platform_versions1:
@@ -80,10 +82,11 @@ class Processor:
         self.general_section_name = 'General'
         self.general_section = self.config[self.general_section_name]
 
-        # self.exe_1c = Path(self.general_section['1C'])
-        # if not self.exe_1c.exists():
-        #     raise SettingsError('1C:Enterprise 8 does not exist!')
-        self.exe_1c = get_last_exe_1c()
+        self.exe_1c = Path(self.general_section['1C'])
+        if not self.exe_1c.exists() or not self.exe_1c.is_file():
+            self.exe_1c = get_last_exe_1c()
+            if self.exe_1c is None:
+                raise SettingsError('1C:Enterprise 8 does not exist!')
 
         self.ib = Path(self.general_section['IB'])
         if not self.ib.exists():

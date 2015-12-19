@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -82,8 +82,10 @@ class Processor:
         self.general_section_name = 'General'
         self.general_section = self.config[self.general_section_name]
 
-        self.exe_1c = Path(self.general_section['1C'])
-        if not self.exe_1c.exists() or not self.exe_1c.is_file():
+        self.exe_1c = None
+        if '1C' in self.general_section:
+            self.exe_1c = Path(self.general_section['1C'])
+        if self.exe_1c is None or not self.exe_1c.exists() or not self.exe_1c.is_file():
             self.exe_1c = get_last_exe_1c()
             if self.exe_1c is None:
                 raise SettingsError('1C:Enterprise 8 does not exist!')

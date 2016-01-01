@@ -22,9 +22,13 @@ setup(
         'Development Status :: 4 - Beta',
 
         'Intended Audience :: Developers',
+
+        'Topic :: Software Development',
         'Topic :: Utilities',
 
         'License :: OSI Approved :: MIT License',
+
+        'Natural Language :: Russian',
 
         'Programming Language :: Python :: 3.5'
     ],

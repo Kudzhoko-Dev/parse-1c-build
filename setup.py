@@ -6,6 +6,7 @@ from setuptools import setup
 
 setup(
     name='decompiler1cwrapper',
+    url='https://github.com/Cujoko/decompiler1cwrapper',
     version=decompiler1cwrapper.__version__,
 
     author='Cujoko',

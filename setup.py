@@ -23,14 +23,14 @@ setup(
 
         'Intended Audience :: Developers',
 
-        'Topic :: Software Development',
-        'Topic :: Utilities',
-
         'License :: OSI Approved :: MIT License',
 
         'Natural Language :: Russian',
 
-        'Programming Language :: Python :: 3.5'
+        'Programming Language :: Python :: 3.5',
+
+        'Topic :: Software Development',
+        'Topic :: Utilities'
     ],
 
     keywords='1c v8reader v8unpack gcomp',

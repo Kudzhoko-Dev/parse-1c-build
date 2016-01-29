@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '1.0.6'
+__version__ = '1.0.7'
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -240,7 +240,3 @@ def compile_():
     # pydevd.settrace(port=10050)
 
     Compiler().run()
-
-
-if __name__ == '__main__':
-    print(get_last_exe_1c())

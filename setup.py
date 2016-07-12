@@ -33,7 +33,7 @@ setup(
         'Topic :: Utilities'
     ],
 
-    keywords='1c v8reader v8unpack gcomp',
+    keywords='1c decompiler compiler v8reader v8unpack gcomp',
 
     py_modules=['decompiler1cwrapper'],
 

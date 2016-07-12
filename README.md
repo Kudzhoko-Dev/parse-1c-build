@@ -4,7 +4,7 @@
 Что делает
 ---
 
-При установки пакета в папке скриптов каталога интерпретатора Python создаются исполняемые файлы *decompile1c.exe* и 
+При установке пакета в папке скриптов каталога интерпретатора Python создаются исполняемые файлы *decompile1c.exe* и
 *compile1c.exe*. Первый используется для разборки *epf*- и *erf*-файлов с помощью 
 [v8Reader](https://github.com/xDrivenDevelopment/v8Reader), *ert*- и *md*-файлов с помощью 
 [GComp](http://1c.alterplast.ru/gcomp/), а второй для сборки *epf*- и *erf*-файлов с помощью v8Unpack. 

@@ -6,8 +6,8 @@
 
 При установке пакета в каталоге скриптов интерпретатора Python создаются исполняемые файлы *decompile1c.exe* и
 *compile1c.exe*. Первый используется для разборки *epf*- и *erf*-файлов с помощью 
-[v8Reader](https://github.com/xDrivenDevelopment/v8Reader), *ert*- и *md*-файлов с помощью 
-[GComp](http://1c.alterplast.ru/gcomp/), а второй для сборки *epf*- и *erf*-файлов с помощью v8Unpack. 
+[v8Reader][1], *ert*- и *md*-файлов с помощью 
+[GComp][2], а второй для сборки *epf*- и *erf*-файлов с помощью v8Unpack. 
 
 Пути к сервисной информационной базе, *V8Reader.epf*, *V8Unpack.exe* и GComp указываются в файле настроек 
 *decompiler1cwrapper.ini*, который сначала ищется в текущем каталоге, а затем в каталоге пользователя (в Windows 10 
@@ -21,6 +21,9 @@
 - Python 3.5
 - Платформа 1С:Предприятие 8.3
 - Сервисная информационная база (в которой будет запускаться *V8Reader.epf*)
-- [v8Reader](https://github.com/xDrivenDevelopment/v8Reader)
+- [v8Reader][1]
 - v8Unpack
-- [GComp](http://1c.alterplast.ru/gcomp/)
+- [GComp][2]
+
+[1]: https://github.com/xDrivenDevelopment/v8Reader
+[2]: http://1c.alterplast.ru/gcomp/

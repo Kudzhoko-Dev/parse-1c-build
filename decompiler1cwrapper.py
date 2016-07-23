@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '1.0.8'
+__version__ = '1.1.0'
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -132,9 +132,15 @@ class Decompiler(Processor):
                     )
                 ))
             elif in_path_suffix_lower in ['.ert', '.md']:
+                in_path_ = in_path
+
+                if in_path_suffix_lower == '.md':
+                    tmp_dir = tempfile.mkdtemp()
+                    in_path_ = Path(shutil.copy(str(in_path_), tmp_dir))
+
                 bat_file.write('"{}" -d -F "{}" -DD "{}"'.format(
                     str(self.gcomp),
-                    str(in_path),
+                    str(in_path_),
                     str(out_path)
                 ))
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])

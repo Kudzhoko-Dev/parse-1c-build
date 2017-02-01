@@ -35,6 +35,10 @@ setup(
 
     keywords='1c decompiler compiler v8reader v8unpack gcomp',
 
+    install_requires=[
+        'appdirs>=1.4.0'
+    ],
+
     py_modules=['decompiler1cwrapper'],
 
     entry_points={

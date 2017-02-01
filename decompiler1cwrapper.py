@@ -1,6 +1,7 @@
 #! python3
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
+from appdirs import user_data_dir
 from configparser import RawConfigParser
 import os
 from pathlib import Path
@@ -10,7 +11,10 @@ import shutil
 import subprocess
 
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
+
+APP_AUTHOR = "Util1C"
+APP_NAME = "Decompiler1CWrapper"
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -32,8 +36,7 @@ def get_version_as_number(version: str):
 def get_last_exe_1c():
     result = None
 
-    all_users_profile_path = Path(os.getenv('ALLUSERSPROFILE'))
-    estart_path = all_users_profile_path / '1C'/ '1CEStart' / '1CEStart.cfg'
+    estart_path = Path(user_data_dir('1CEStart', '1C', roaming=True)) / '1CEStart.cfg'
     installed_location_paths = []
     if estart_path.exists() and estart_path.is_file():
         with estart_path.open(encoding='utf-16') as estart_file:
@@ -45,7 +48,7 @@ def get_last_exe_1c():
 
         platform_versions = []
         for installed_location_path in installed_location_paths:
-            if installed_location_path.exists() and installed_location_path.is_dir():
+            if installed_location_path.is_dir():
                 for p1 in installed_location_path.iterdir():
                     version_as_number = get_version_as_number(str(p1.name))
                     if version_as_number != 0:
@@ -71,9 +74,9 @@ class Processor:
                                     help='if this option exists then debug mode is enabled')
 
         settings_file_path = Path('decompiler1cwrapper.ini')
-        if not settings_file_path.exists() or not settings_file_path.is_file():
-            settings_file_path = Path.home() / settings_file_path
-            if not settings_file_path.exists() or not settings_file_path.is_file():
+        if not settings_file_path.is_file():
+            settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path
+            if not settings_file_path.is_file():
                 raise SettingsError('Settings file does not exist!')
 
         self.config = RawConfigParser()
@@ -85,7 +88,7 @@ class Processor:
         self.exe_1c = None
         if '1C' in self.general_section:
             self.exe_1c = Path(self.general_section['1C'])
-        if self.exe_1c is None or not self.exe_1c.exists() or not self.exe_1c.is_file():
+        if self.exe_1c is None or not self.exe_1c.is_file():
             self.exe_1c = get_last_exe_1c()
             if self.exe_1c is None:
                 raise SettingsError('1C:Enterprise 8 does not exist!')

@@ -3,7 +3,6 @@
 from argparse import ArgumentParser
 from appdirs import user_data_dir
 from configparser import RawConfigParser
-import os
 from pathlib import Path
 import tempfile
 import re
@@ -11,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 APP_AUTHOR = "Util1C"
 APP_NAME = "Decompiler1CWrapper"
@@ -38,7 +37,7 @@ def get_last_exe_1c():
 
     estart_path = Path(user_data_dir('1CEStart', '1C', roaming=True)) / '1CEStart.cfg'
     installed_location_paths = []
-    if estart_path.exists() and estart_path.is_file():
+    if estart_path.is_file():
         with estart_path.open(encoding='utf-16') as estart_file:
             for line in estart_file.readlines():
                 key_and_value = line.split('=')
@@ -53,7 +52,7 @@ def get_last_exe_1c():
                     version_as_number = get_version_as_number(str(p1.name))
                     if version_as_number != 0:
                         p2 = p1 / 'bin' / '1cv8.exe'
-                        if p2.exists() and p2.is_file():
+                        if p2.is_file():
                             platform_versions.append((version_as_number, p2))
 
         platform_versions1 = sorted(platform_versions, key=lambda x: x[0], reverse=True)
@@ -94,19 +93,19 @@ class Processor:
                 raise SettingsError('1C:Enterprise 8 does not exist!')
 
         self.ib = Path(self.general_section['IB'])
-        if not self.ib.exists():
+        if not self.ib.is_dir():
             raise SettingsError('Service information base does not exist!')
 
         self.v8_reader = Path(self.general_section['V8Reader'])
-        if not self.v8_reader.exists():
+        if not self.v8_reader.is_file():
             raise SettingsError('V8Reader does not exist!')
 
         self.v8_unpack = Path(self.general_section['V8Unpack'])
-        if not self.v8_unpack.exists():
+        if not self.v8_unpack.is_file():
             raise SettingsError('V8Unpack does not exist!')
 
         self.gcomp = Path(self.general_section['GComp'])
-        if not self.gcomp.exists():
+        if not self.gcomp.is_file():
             raise SettingsError('GComp does not exist!')
 
     def run(self):
@@ -169,7 +168,7 @@ class Compiler(Processor):
 
     def perform(self, input_folder: Path, output_file: Path):
         temp_source_folder = Path(tempfile.mkdtemp())
-        if not temp_source_folder.exists():
+        if not temp_source_folder.is_dir():
             temp_source_folder.mkdir(parents=True)
         else:
             shutil.rmtree(str(temp_source_folder), ignore_errors=True)
@@ -183,7 +182,7 @@ class Compiler(Processor):
                 new_path = temp_source_folder / names[0].strip()
                 new_folder_path = new_path.parent
 
-                if not new_folder_path.exists():
+                if not new_folder_path.is_dir():
                     new_folder_path.mkdir(parents=True)
 
                 old_path = input_folder / names[1].strip()
@@ -206,13 +205,6 @@ class Compiler(Processor):
     def run(self):
         args = self.argparser.parse_args()
 
-        if args.debug:
-            import sys
-            sys.path.append('C:\\Python34\\pycharm-debug-py3k.egg')
-
-            import pydevd
-            pydevd.settrace(port=10050)
-
         input_folder = Path(args.input)
         output_file = Path(args.output)
 
@@ -234,18 +226,8 @@ class SettingsError(Error):
 
 
 def decompile():
-    # sys.path.append('C:\\Python35\\pycharm-debug-py3k.egg')
-    #
-    # import pydevd
-    # pydevd.settrace(port=10050)
-
     Decompiler().run()
 
 
 def compile_():
-    # sys.path.append('C:\\Python35\\pycharm-debug-py3k.egg')
-    #
-    # import pydevd
-    # pydevd.settrace(port=10050)
-
     Compiler().run()

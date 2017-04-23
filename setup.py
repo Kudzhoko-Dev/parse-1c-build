@@ -20,10 +20,15 @@ setup(
 
     classifiers=[
         'Development Status :: 4 - Beta',
+
         'Intended Audience :: Developers',
+
         'License :: OSI Approved :: MIT License',
+
         'Natural Language :: Russian',
+
         'Programming Language :: Python :: 3.5',
+
         'Topic :: Software Development',
         'Topic :: Utilities'
     ],
@@ -31,7 +36,7 @@ setup(
     keywords='1c decompiler compiler v8reader v8unpack gcomp',
 
     install_requires=[
-        'appdirs>=1.4.0'
+        'appdirs>=1.4.3'
     ],
 
     py_modules=['decompiler1cwrapper'],

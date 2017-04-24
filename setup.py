@@ -1,17 +1,17 @@
 #! python3
 # -*- coding: utf-8 -*-
-import decompiler1cwrapper
+import parse_1c_build
 from setuptools import setup
 
 
 setup(
-    name='decompiler1cwrapper',
+    name='parse_1c_build',
 
-    version=decompiler1cwrapper.__version__,
+    version=parse_1c_build.__version__,
 
-    description='Decompile and compile utilities for 1C:Enterprise',
+    description='Parse and build utilities for 1C:Enterprise',
 
-    url='https://github.com/Cujoko/decompiler1cwrapper',
+    url='https://github.com/Cujoko/parse_1c_build',
 
     author='Cujoko',
     author_email='cujoko@gmail.com',
@@ -33,18 +33,18 @@ setup(
         'Topic :: Utilities'
     ],
 
-    keywords='1c decompiler compiler v8reader v8unpack gcomp',
+    keywords='1c parse build v8reader v8unpack gcomp',
 
     install_requires=[
         'appdirs>=1.4.3'
     ],
 
-    py_modules=['decompiler1cwrapper'],
+    py_modules=['parse_1c_build'],
 
     entry_points={
         'console_scripts': [
-            'decompile1c=decompiler1cwrapper:decompile',
-            'compile1c=decompiler1cwrapper:compile_'
+            'parse-1c=parse_1c_build:parse',
+            'build-1c=parse_1c_build:build'
         ]
     }
 )

@@ -10,10 +10,10 @@ import shutil
 import subprocess
 
 
-__version__ = '1.2.2'
+__version__ = '2.0.0'
 
-APP_AUTHOR = "Util1C"
-APP_NAME = "Decompiler1CWrapper"
+APP_AUTHOR = 'util-1c'
+APP_NAME = 'parse-1c-build'
 
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
@@ -72,7 +72,7 @@ class Processor:
         self.argparser.add_argument('--debug', action='store_true', default=False,
                                     help='if this option exists then debug mode is enabled')
 
-        settings_file_path = Path('decompiler1cwrapper.ini')
+        settings_file_path = Path('parse_1c_build.ini')
         if not settings_file_path.is_file():
             settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path
             if not settings_file_path.is_file():
@@ -112,103 +112,107 @@ class Processor:
         pass
 
 
-class Decompiler(Processor):
+class Parser(Processor):
     def __init__(self):
         super().__init__()
 
         self.argparser.add_argument('input', nargs='?')
         self.argparser.add_argument('output', nargs='?')
 
-    def perform(self, in_path: Path, out_path: Path):
+    def parse(self, input_path: Path, output_path: Path):
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
-            in_path_suffix_lower = in_path.suffix.lower()
+            in_path_suffix_lower = input_path.suffix.lower()
             if in_path_suffix_lower in ['.epf', '.erf']:
                 bat_file.write('"{}" /F"{}" /DisableStartupMessages /Execute"{}" {}'.format(
                     str(self.exe_1c),
                     str(self.ib),
                     str(self.v8_reader),
                     '/C"decompile;pathtocf;{};pathout;{};shutdown;convert-mxl2txt;"'.format(
-                        str(in_path),
-                        str(out_path)
+                        str(input_path),
+                        str(output_path)
                     )
                 ))
             elif in_path_suffix_lower in ['.ert', '.md']:
-                in_path_ = in_path
+                input_path_ = input_path
 
                 if in_path_suffix_lower == '.md':
                     tmp_dir = tempfile.mkdtemp()
-                    in_path_ = Path(shutil.copy(str(in_path_), tmp_dir))
+                    input_path_ = Path(shutil.copy(str(input_path_), tmp_dir))
 
                 bat_file.write('"{}" -d -F "{}" -DD "{}"'.format(
                     str(self.gcomp),
-                    str(in_path_),
-                    str(out_path)
+                    str(input_path_),
+                    str(output_path)
                 ))
+
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
         if not exit_code == 0:
-            raise Exception('Decompiling "{}" is failed!'.format(str(in_path)))
+            raise Exception('Decompiling "{}" is failed!'.format(str(input_path)))
+
         Path(bat_file.name).unlink()
 
     def run(self):
         args = self.argparser.parse_args()
 
-        input_file = Path(args.input)
-        output_folder = Path(args.output)
+        input_path = Path(args.input)
+        output_path = Path(args.output)
+        self.parse(input_path, output_path)
 
-        self.perform(input_file, output_folder)
 
-
-class Compiler(Processor):
+class Builder(Processor):
     def __init__(self):
         super().__init__()
 
         self.argparser.add_argument('input', nargs='?')
         self.argparser.add_argument('output', nargs='?')
 
-    def perform(self, input_folder: Path, output_file: Path):
-        temp_source_folder = Path(tempfile.mkdtemp())
-        if not temp_source_folder.is_dir():
-            temp_source_folder.mkdir(parents=True)
+        self.temp_source_folder = Path(tempfile.mkdtemp())
+        if not self.temp_source_folder.is_dir():
+            self.temp_source_folder.mkdir(parents=True)
         else:
-            shutil.rmtree(str(temp_source_folder), ignore_errors=True)
+            shutil.rmtree(str(self.temp_source_folder), ignore_errors=True)
 
-        renames_file = input_folder / 'renames.txt'
+    def copy_sources(self, input_path: Path):
+        renames_file = input_path / 'renames.txt'
 
         with renames_file.open(encoding='utf-8-sig') as file:
             for line in file:
                 names = line.split('-->')
 
-                new_path = temp_source_folder / names[0].strip()
+                new_path = self.temp_source_folder / names[0].strip()
                 new_folder_path = new_path.parent
 
                 if not new_folder_path.is_dir():
                     new_folder_path.mkdir(parents=True)
 
-                old_path = input_folder / names[1].strip()
+                old_path = input_path / names[1].strip()
 
                 if old_path.is_dir():
-                    new_path = temp_source_folder / names[0].strip()
+                    new_path = self.temp_source_folder / names[0].strip()
                     shutil.copytree(str(old_path), str(new_path))
                 else:
                     shutil.copy(str(old_path), str(new_path))
 
+    def build(self, output_path: Path):
         exit_code = subprocess.check_call([
             str(self.v8_unpack),
             '-B',
-            str(temp_source_folder),
-            str(output_file)
+            str(self.temp_source_folder),
+            str(output_path)
         ])
+
         if not exit_code == 0:
-            raise Exception('Compiling "{}" is failed!'.format(str(output_file)))
+            raise Exception('Compiling "{}" is failed!'.format(str(output_path)))
 
     def run(self):
         args = self.argparser.parse_args()
 
-        input_folder = Path(args.input)
-        output_file = Path(args.output)
+        input_path = Path(args.input)
+        self.copy_sources(input_path)
 
-        self.perform(input_folder, output_file)
+        output_path = Path(args.output)
+        self.build(output_path)
 
 
 class Error(Exception):
@@ -225,9 +229,9 @@ class SettingsError(Error):
         super().__init__('{}'.format(message))
 
 
-def decompile():
-    Decompiler().run()
+def parse():
+    Parser().run()
 
 
-def compile_():
-    Compiler().run()
+def build():
+    Builder().run()

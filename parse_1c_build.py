@@ -18,52 +18,6 @@ APP_NAME = 'parse-1c-build'
 pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 
 
-def get_version_as_number(version: str):
-    result = 0
-    m = 10000
-    match = pattern_version.match(version)
-    if match is not None:
-        result = \
-            int(match.group(2)) * m ** 3 + \
-            int(match.group(3)) * m ** 2 + \
-            int(match.group(4)) * m + \
-            int(match.group(5))
-
-    return result
-
-
-def get_last_exe_1c():
-    result = None
-
-    estart_path = Path(user_data_dir('1CEStart', '1C', roaming=True)) / '1CEStart.cfg'
-    installed_location_paths = []
-    if estart_path.is_file():
-        with estart_path.open(encoding='utf-16') as estart_file:
-            for line in estart_file.readlines():
-                key_and_value = line.split('=')
-                if key_and_value[0] == 'InstalledLocation':
-                    value = '='.join(key_and_value[1:])
-                    installed_location_paths.append(Path(value.rstrip()))
-
-        platform_versions = []
-        for installed_location_path in installed_location_paths:
-            if installed_location_path.is_dir():
-                for p1 in installed_location_path.iterdir():
-                    version_as_number = get_version_as_number(str(p1.name))
-                    if version_as_number != 0:
-                        p2 = p1 / 'bin' / '1cv8.exe'
-                        if p2.is_file():
-                            platform_versions.append((version_as_number, p2))
-
-        platform_versions1 = sorted(platform_versions, key=lambda x: x[0], reverse=True)
-        if platform_versions1:
-            result = platform_versions1[0][1]
-    else:
-        raise SettingsError('1CEStart.cfg file does not exist!')
-
-    return result
-
-
 class Processor:
     def __init__(self):
         self.argparser = ArgumentParser()
@@ -72,7 +26,7 @@ class Processor:
         self.argparser.add_argument('--debug', action='store_true', default=False,
                                     help='if this option exists then debug mode is enabled')
 
-        settings_file_path = Path('parse_1c_build.ini')
+        settings_file_path = Path('settings.ini')
         if not settings_file_path.is_file():
             settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path
             if not settings_file_path.is_file():
@@ -88,7 +42,7 @@ class Processor:
         if '1C' in self.general_section:
             self.exe_1c = Path(self.general_section['1C'])
         if self.exe_1c is None or not self.exe_1c.is_file():
-            self.exe_1c = get_last_exe_1c()
+            self.exe_1c = Processor.get_last_exe_1c()
             if self.exe_1c is None:
                 raise SettingsError('1C:Enterprise 8 does not exist!')
 
@@ -107,6 +61,52 @@ class Processor:
         self.gcomp = Path(self.general_section['GComp'])
         if not self.gcomp.is_file():
             raise SettingsError('GComp does not exist!')
+
+    @staticmethod
+    def get_version_as_number(version: str):
+        result = 0
+        m = 10000
+        match = pattern_version.match(version)
+        if match is not None:
+            result = \
+                int(match.group(2)) * m ** 3 + \
+                int(match.group(3)) * m ** 2 + \
+                int(match.group(4)) * m + \
+                int(match.group(5))
+
+        return result
+
+    @staticmethod
+    def get_last_exe_1c():
+        result = None
+
+        estart_path = Path(user_data_dir('1CEStart', '1C', roaming=True)) / '1CEStart.cfg'
+        installed_location_paths = []
+        if estart_path.is_file():
+            with estart_path.open(encoding='utf-16') as estart_file:
+                for line in estart_file.readlines():
+                    key_and_value = line.split('=')
+                    if key_and_value[0] == 'InstalledLocation':
+                        value = '='.join(key_and_value[1:])
+                        installed_location_paths.append(Path(value.rstrip()))
+
+            platform_versions = []
+            for installed_location_path in installed_location_paths:
+                if installed_location_path.is_dir():
+                    for p1 in installed_location_path.iterdir():
+                        version_as_number = Processor.get_version_as_number(str(p1.name))
+                        if version_as_number != 0:
+                            p2 = p1 / 'bin' / '1cv8.exe'
+                            if p2.is_file():
+                                platform_versions.append((version_as_number, p2))
+
+            platform_versions1 = sorted(platform_versions, key=lambda x: x[0], reverse=True)
+            if platform_versions1:
+                result = platform_versions1[0][1]
+        else:
+            raise SettingsError('1CEStart.cfg file does not exist!')
+
+        return result
 
     def run(self):
         pass
@@ -167,20 +167,26 @@ class Builder(Processor):
         self.argparser.add_argument('input', nargs='?')
         self.argparser.add_argument('output', nargs='?')
 
-        self.temp_source_folder = Path(tempfile.mkdtemp())
-        if not self.temp_source_folder.is_dir():
-            self.temp_source_folder.mkdir(parents=True)
+    @staticmethod
+    def get_temp_source_folder():
+        temp_source_folder = Path(tempfile.mkdtemp())
+        if not temp_source_folder.is_dir():
+            temp_source_folder.mkdir(parents=True)
         else:
-            shutil.rmtree(str(self.temp_source_folder), ignore_errors=True)
+            shutil.rmtree(str(temp_source_folder), ignore_errors=True)
 
-    def copy_sources(self, input_path: Path):
+        return temp_source_folder
+
+    def build(self, input_path: Path, output_path: Path):
+        temp_source_folder = Builder.get_temp_source_folder()
+
         renames_file = input_path / 'renames.txt'
 
         with renames_file.open(encoding='utf-8-sig') as file:
             for line in file:
                 names = line.split('-->')
 
-                new_path = self.temp_source_folder / names[0].strip()
+                new_path = temp_source_folder / names[0].strip()
                 new_folder_path = new_path.parent
 
                 if not new_folder_path.is_dir():
@@ -189,16 +195,15 @@ class Builder(Processor):
                 old_path = input_path / names[1].strip()
 
                 if old_path.is_dir():
-                    new_path = self.temp_source_folder / names[0].strip()
+                    new_path = temp_source_folder / names[0].strip()
                     shutil.copytree(str(old_path), str(new_path))
                 else:
                     shutil.copy(str(old_path), str(new_path))
 
-    def build(self, output_path: Path):
         exit_code = subprocess.check_call([
             str(self.v8_unpack),
             '-B',
-            str(self.temp_source_folder),
+            str(temp_source_folder),
             str(output_path)
         ])
 
@@ -209,10 +214,8 @@ class Builder(Processor):
         args = self.argparser.parse_args()
 
         input_path = Path(args.input)
-        self.copy_sources(input_path)
-
         output_path = Path(args.output)
-        self.build(output_path)
+        self.build(input_path, output_path)
 
 
 class Error(Exception):

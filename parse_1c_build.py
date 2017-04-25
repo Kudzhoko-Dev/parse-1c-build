@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -148,7 +148,7 @@ class Parser(Processor):
 
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
         if not exit_code == 0:
-            raise Exception('Decompiling "{}" is failed!'.format(str(input_path)))
+            raise Exception('Parsing "{}" is failed!'.format(str(input_path)))
 
         Path(bat_file.name).unlink()
 
@@ -167,18 +167,12 @@ class Builder(Processor):
         self.argparser.add_argument('input', nargs='?')
         self.argparser.add_argument('output', nargs='?')
 
-    @staticmethod
-    def get_temp_source_folder():
+    def get_temp_source_folder(self, input_path: Path):
         temp_source_folder = Path(tempfile.mkdtemp())
         if not temp_source_folder.is_dir():
             temp_source_folder.mkdir(parents=True)
         else:
             shutil.rmtree(str(temp_source_folder), ignore_errors=True)
-
-        return temp_source_folder
-
-    def build(self, input_path: Path, output_path: Path):
-        temp_source_folder = Builder.get_temp_source_folder()
 
         renames_file = input_path / 'renames.txt'
 
@@ -200,6 +194,9 @@ class Builder(Processor):
                 else:
                     shutil.copy(str(old_path), str(new_path))
 
+        return temp_source_folder
+
+    def build_raw(self, temp_source_folder: Path, output_path: Path):
         exit_code = subprocess.check_call([
             str(self.v8_unpack),
             '-B',
@@ -208,7 +205,11 @@ class Builder(Processor):
         ])
 
         if not exit_code == 0:
-            raise Exception('Compiling "{}" is failed!'.format(str(output_path)))
+            raise Exception('Building "{}" is failed!'.format(str(output_path)))
+
+    def build(self, input_path: Path, output_path: Path):
+        temp_source_folder = self.get_temp_source_folder(input_path)
+        self.build_raw(temp_source_folder, output_path)
 
     def run(self):
         args = self.argparser.parse_args()

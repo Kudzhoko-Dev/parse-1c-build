@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:\_Работа\Инструменты\1С\Скрипты\parser_1c_builder\.idea\decompiler1cwrapper.iml" filepath="D:\_Работа\Инструменты\1С\Скрипты\parser_1c_builder\.idea\decompiler1cwrapper.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/parser_1c_builder.iml" filepath="$PROJECT_DIR$/.idea/parser_1c_builder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/parse-1c-build.iml" filepath="$PROJECT_DIR$/.idea/parse-1c-build.iml" />
     </modules>
   </component>
 </project>

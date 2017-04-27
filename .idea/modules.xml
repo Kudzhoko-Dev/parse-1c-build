@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/parse-1c-build.iml" filepath="$PROJECT_DIR$/.idea/parse-1c-build.iml" />
-      <module fileurl="file://D:\_Работа\Инструменты\1С\Скрипты\parse-1c-build\.idea\parse-1c-build.iml" filepath="D:\_Работа\Инструменты\1С\Скрипты\parse-1c-build\.idea\parse-1c-build.iml" />
     </modules>
   </component>
 </project>

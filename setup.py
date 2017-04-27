@@ -36,7 +36,7 @@ setup(
     keywords='1c parse build v8reader v8unpack gcomp',
 
     install_requires=[
-        'appdirs>=1.4.3'
+        'appdirs'
     ],
 
     py_modules=['parse_1c_build'],

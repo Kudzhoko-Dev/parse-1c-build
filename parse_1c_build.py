@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.2.0'
+__version__ = '2.2.1'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

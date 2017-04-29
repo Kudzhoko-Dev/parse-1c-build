@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from appdirs import user_data_dir
 from configparser import RawConfigParser
+import os
 from pathlib import Path
 import tempfile
 import re
@@ -10,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.1.2'
+__version__ = '2.1.3'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -79,7 +80,7 @@ class Processor:
     def get_last_exe_1c():
         result = None
 
-        estart_file_path = Path(user_data_dir('1CEStart', '1C', roaming=True)) / '1CEStart.cfg'
+        estart_file_path = Path(os.getenv('ALLUSERSPROFILE')) / '1C'/ '1CEStart' / '1CEStart.cfg'
         installed_location_paths = []
         if estart_file_path.is_file():
             with estart_file_path.open(encoding='utf-16') as estart_file:

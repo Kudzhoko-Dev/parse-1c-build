@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.1.4'
+__version__ = '2.2.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -136,7 +136,7 @@ class Parser(Processor):
             elif input_file_path_suffix_lower in ['.ert', '.md']:
                 input_file_path_ = input_file_path
 
-                if input_file_path_suffix_lower == '.md':
+                if input_file_path_suffix_lower == '.md':  # fixme Тут что-то непонятное и скорее всего неработоспособное
                     temp_dir_name = tempfile.mkdtemp()
                     input_file_path_ = Path(shutil.copy(str(input_file_path_), temp_dir_name))
 
@@ -169,10 +169,6 @@ class Builder(Processor):
 
     def get_temp_source_dir_path(self, input_dir_path: Path):
         temp_source_dir_path = Path(tempfile.mkdtemp())
-        if not temp_source_dir_path.is_dir():
-            temp_source_dir_path.mkdir(parents=True)
-        else:
-            shutil.rmtree(str(temp_source_dir_path), ignore_errors=True)
 
         renames_file_path = input_dir_path / 'renames.txt'
 
@@ -209,7 +205,10 @@ class Builder(Processor):
 
     def build(self, input_dir_path: Path, output_file_path: Path):
         temp_source_dir_path = self.get_temp_source_dir_path(input_dir_path)
+
         self.build_raw(temp_source_dir_path, output_file_path)
+
+        shutil.rmtree(str(temp_source_dir_path))
 
     def run(self):
         args = self.argparser.parse_args()

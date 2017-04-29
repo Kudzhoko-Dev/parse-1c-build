@@ -1,4 +1,4 @@
-#! python3
+#! python3.6
 # -*- coding: utf-8 -*-
 import parse_1c_build
 from setuptools import setup

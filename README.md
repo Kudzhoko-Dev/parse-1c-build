@@ -18,12 +18,25 @@
 ---
 
 - Windows
-- Python 3.5
+- Python 3.6. Каталоги интерпретатора и скриптов Python должны быть прописаны в переменной окружения Path
 - Платформа 1С:Предприятие 8.3
 - Сервисная информационная база (в которой будет запускаться *V8Reader.epf*)
 - [V8Reader][1]
 - V8Unpack
 - [GComp][2]
+
+Состав
+---
+
+- *parse_1c_build.py* — скрипт для разборки *epf*-, *erf*-, *ert*- и *md*-файлов
+- *settings.ini.sample* — образец файла с настройками
+
+Установка
+---
+
+Пакет можно установить с сайта [PyPI](pypi.python.org), выполнив команду:
+
+> pip install parse-1c-build
 
 [1]: https://github.com/xDrivenDevelopment/v8Reader
 [2]: http://1c.alterplast.ru/gcomp/

@@ -1,4 +1,4 @@
-#! python3
+#! python3.6
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
 from appdirs import user_data_dir
@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.1.3'
+__version__ = '2.1.4'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

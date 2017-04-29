@@ -21,6 +21,7 @@ pattern_version = re.compile(r'\D*(?P<version>(\d+)\.(\d+)\.(\d+)\.(\d+))\D*')
 class Processor:
     def __init__(self):
         self.argparser = ArgumentParser()
+
         self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
             __version__))
 

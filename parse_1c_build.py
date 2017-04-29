@@ -10,7 +10,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.1.1'
+__version__ = '2.1.2'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -23,8 +23,6 @@ class Processor:
         self.argparser = ArgumentParser()
         self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
             __version__))
-        self.argparser.add_argument('--debug', action='store_true', default=False,
-                                    help='if this option exists then debug mode is enabled')
 
         settings_file_path = Path('settings.ini')
         if not settings_file_path.is_file():

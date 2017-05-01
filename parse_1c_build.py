@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.2.1'
+__version__ = '2.3.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -25,12 +25,16 @@ class Processor:
 
         self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
             __version__))
+        self.argparser.add_argument('input', nargs=1)
+        self.argparser.add_argument('output', nargs=1)
 
         settings_file_path = Path('settings.ini')
         if not settings_file_path.is_file():
             settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path
             if not settings_file_path.is_file():
-                raise SettingsError('Settings file does not exist!')
+                settings_file_path = Path(os.getenv('ALLUSERSPROFILE')) / APP_AUTHOR / APP_NAME / settings_file_path
+                if not settings_file_path.is_file():
+                    raise SettingsError('Settings file does not exist!')
 
         self.config = RawConfigParser()
         self.config.optionxform = lambda option: option
@@ -113,12 +117,6 @@ class Processor:
 
 
 class Parser(Processor):
-    def __init__(self):
-        super().__init__()
-
-        self.argparser.add_argument('input', nargs='?')
-        self.argparser.add_argument('output', nargs='?')
-
     def parse(self, input_file_path: Path, output_dir_path: Path):
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
@@ -161,12 +159,6 @@ class Parser(Processor):
 
 
 class Builder(Processor):
-    def __init__(self):
-        super().__init__()
-
-        self.argparser.add_argument('input', nargs='?')
-        self.argparser.add_argument('output', nargs='?')
-
     def get_temp_source_dir_path(self, input_dir_path: Path):
         temp_source_dir_path = Path(tempfile.mkdtemp())
 

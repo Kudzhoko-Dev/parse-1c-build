@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.3.1'
+__version__ = '2.4.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -26,7 +26,7 @@ class Processor:
         self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
             __version__))
         self.argparser.add_argument('input', nargs=1)
-        self.argparser.add_argument('output', nargs=1)
+        self.argparser.add_argument('output', nargs='?')
 
         settings_file_path = Path('settings.ini')
         if not settings_file_path.is_file():
@@ -154,7 +154,12 @@ class Parser(Processor):
         args = self.argparser.parse_args()
 
         input_file_path = Path(args.input[0])
-        output_dir_path = Path(args.output[0])
+
+        if args.output is None:
+            output_dir_path = input_file_path.stem + '_' + input_file_path.suffix[1:] + '_src'
+        else:
+            output_dir_path = Path(args.output)
+
         self.parse(input_file_path, output_dir_path)
 
 
@@ -205,8 +210,16 @@ class Builder(Processor):
     def run(self):
         args = self.argparser.parse_args()
 
-        input_dir_path = Path(args.input)
-        output_file_path = Path(args.output)
+        input_dir_path = Path(args.input[0])
+
+        if args.output is None:
+            output_file_name = input_dir_path.name.rpartition('_')[0]
+            parts = output_file_name.rpartition('_')
+
+            output_file_path = Path('{}.{}'.format(parts[0], parts[2]))
+        else:
+            output_file_path = Path(args.output)
+
         self.build(input_dir_path, output_file_path)
 
 

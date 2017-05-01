@@ -11,7 +11,7 @@ import shutil
 import subprocess
 
 
-__version__ = '2.3.0'
+__version__ = '2.3.1'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -153,8 +153,8 @@ class Parser(Processor):
     def run(self):
         args = self.argparser.parse_args()
 
-        input_file_path = Path(args.input)
-        output_dir_path = Path(args.output)
+        input_file_path = Path(args.input[0])
+        output_dir_path = Path(args.output[0])
         self.parse(input_file_path, output_dir_path)
 
 

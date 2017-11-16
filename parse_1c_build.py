@@ -1,17 +1,17 @@
 #! python3.6
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
-from appdirs import user_data_dir
 from configparser import RawConfigParser
 import os
 from pathlib import Path
-import tempfile
 import re
 import shutil
 import subprocess
+import tempfile
 
+from appdirs import site_data_dir, user_data_dir
 
-__version__ = '2.4.0'
+__version__ = '2.4.1'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -30,9 +30,9 @@ class Processor:
 
         settings_file_path = Path('settings.ini')
         if not settings_file_path.is_file():
-            settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path
+            settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path.name
             if not settings_file_path.is_file():
-                settings_file_path = Path(os.getenv('ALLUSERSPROFILE')) / APP_AUTHOR / APP_NAME / settings_file_path
+                settings_file_path = Path(site_data_dir(APP_NAME, APP_AUTHOR)) / settings_file_path.name
                 if not settings_file_path.is_file():
                     raise SettingsError('Settings file does not exist!')
 

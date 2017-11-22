@@ -1,8 +1,8 @@
 #! python3.6
 # -*- coding: utf-8 -*-
-import parse_1c_build
 from setuptools import setup
 
+import parse_1c_build
 
 setup(
     name='parse_1c_build',
@@ -36,7 +36,8 @@ setup(
     keywords='1c parse build v8reader v8unpack gcomp',
 
     install_requires=[
-        'appdirs'
+        'appdirs',
+        'commons-1c'
     ],
 
     py_modules=['parse_1c_build'],

@@ -1,16 +1,16 @@
 #! python3.6
 # -*- coding: utf-8 -*-
-import shutil
-import subprocess
-import tempfile
 from argparse import ArgumentParser
 from configparser import RawConfigParser
 from pathlib import Path
+import shutil
+import subprocess
+import tempfile
 
 from appdirs import site_data_dir, user_data_dir
-from commons_1c import get_last_exe_1c, SettingsError
+from commons_1c import SettingsError, get_last_exe_1c
 
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

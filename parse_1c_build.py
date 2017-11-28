@@ -8,16 +8,16 @@ import subprocess
 import tempfile
 
 from appdirs import site_data_dir, user_data_dir
-from commons_1c import SettingsError, get_last_exe_1c
+from commons_1c import SettingsError, get_last_1c_exe_file_path
 
-__version__ = '2.5.1'
+__version__ = '2.5.2'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
 
 
 class Processor:
-    def __init__(self):
+    def __init__(self) -> None:
         self.argparser = ArgumentParser()
 
         self.argparser.add_argument('-v', '--version', action='version', version='%(prog)s, ver. {}'.format(
@@ -39,12 +39,12 @@ class Processor:
         self.general_section_name = 'General'
         self.general_section = self.config[self.general_section_name]
 
-        self.exe_1c_file_path = None
+        self.last_1c_exe_file_path = None
         if '1C' in self.general_section:
-            self.exe_1c_file_path = Path(self.general_section['1C'])
-        if self.exe_1c_file_path is None or not self.exe_1c_file_path.is_file():
-            self.exe_1c_file_path = get_last_exe_1c()
-            if self.exe_1c_file_path is None:
+            self.last_1c_exe_file_path = Path(self.general_section['1C'])
+        if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
+            self.last_1c_exe_file_path = get_last_1c_exe_file_path()
+            if self.last_1c_exe_file_path is None:
                 raise SettingsError('1C:Enterprise 8 does not exist!')
 
         self.ib_dir_path = Path(self.general_section['IB'])
@@ -63,18 +63,18 @@ class Processor:
         if not self.gcomp_file_path.is_file():
             raise SettingsError('GComp does not exist!')
 
-    def run(self):
+    def run(self) -> None:
         pass
 
 
 class Parser(Processor):
-    def parse(self, input_file_path: Path, output_dir_path: Path):
+    def parse(self, input_file_path: Path, output_dir_path: Path) -> None:
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
             input_file_path_suffix_lower = input_file_path.suffix.lower()
             if input_file_path_suffix_lower in ['.epf', '.erf']:
                 bat_file.write('"{}" /F"{}" /DisableStartupMessages /Execute"{}" {}'.format(
-                    str(self.exe_1c_file_path),
+                    str(self.last_1c_exe_file_path),
                     str(self.ib_dir_path),
                     str(self.v8_reader_file_path),
                     '/C"decompile;pathtocf;{};pathout;{};shutdown;convert-mxl2txt;"'.format(
@@ -85,8 +85,7 @@ class Parser(Processor):
             elif input_file_path_suffix_lower in ['.ert', '.md']:
                 input_file_path_ = input_file_path
 
-                if input_file_path_suffix_lower == '.md':  # fixme Тут что-то непонятное и скорее всего
-                    # неработоспособное
+                if input_file_path_suffix_lower == '.md':  # fixme Тут что-то непонятное и скорее всего неработоспособное
                     temp_dir_name = tempfile.mkdtemp()
                     input_file_path_ = Path(shutil.copy(str(input_file_path_), temp_dir_name))
 
@@ -102,7 +101,7 @@ class Parser(Processor):
 
         Path(bat_file.name).unlink()
 
-    def run(self):
+    def run(self) -> None:
         args = self.argparser.parse_args()
 
         input_file_path = Path(args.input[0])
@@ -117,7 +116,7 @@ class Parser(Processor):
 
 class Builder(Processor):
     @staticmethod
-    def get_temp_source_dir_path(input_dir_path: Path):
+    def get_temp_source_dir_path(input_dir_path: Path) -> Path:
         temp_source_dir_path = Path(tempfile.mkdtemp())
 
         renames_file_path = input_dir_path / 'renames.txt'
@@ -142,7 +141,7 @@ class Builder(Processor):
 
         return temp_source_dir_path
 
-    def build_raw(self, temp_source_dir_path: Path, output_file_path: Path):
+    def build_raw(self, temp_source_dir_path: Path, output_file_path: Path) -> None:
         exit_code = subprocess.check_call([
             str(self.v8_unpack_file_path),
             '-B',
@@ -153,14 +152,14 @@ class Builder(Processor):
         if not exit_code == 0:
             raise Exception('Building "{}" is failed!'.format(str(output_file_path)))
 
-    def build(self, input_dir_path: Path, output_file_path: Path):
+    def build(self, input_dir_path: Path, output_file_path: Path) -> None:
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
 
         self.build_raw(temp_source_dir_path, output_file_path)
 
         shutil.rmtree(str(temp_source_dir_path))
 
-    def run(self):
+    def run(self) -> None:
         args = self.argparser.parse_args()
 
         input_dir_path = Path(args.input[0])
@@ -176,9 +175,9 @@ class Builder(Processor):
         self.build(input_dir_path, output_file_path)
 
 
-def parse():
+def parse() -> None:
     Parser().run()
 
 
-def build():
+def build() -> None:
     Builder().run()

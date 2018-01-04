@@ -1,4 +1,3 @@
-#! python3.6
 # -*- coding: utf-8 -*-
 from setuptools import setup
 

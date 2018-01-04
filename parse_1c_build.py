@@ -9,7 +9,7 @@ import tempfile
 from appdirs import site_data_dir, user_data_dir
 from commons_1c import SettingsError, get_last_1c_exe_file_path
 
-__version__ = '2.5.4'
+__version__ = '2.5.5'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

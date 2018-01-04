@@ -10,7 +10,7 @@ import tempfile
 from appdirs import site_data_dir, user_data_dir
 from commons_1c import SettingsError, get_last_1c_exe_file_path
 
-__version__ = '2.5.2'
+__version__ = '2.5.3'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -33,33 +33,33 @@ class Processor:
                 if not settings_file_path.is_file():
                     raise SettingsError('Settings file does not exist!')
 
-        self.config = RawConfigParser()
-        self.config.optionxform = lambda option: option
-        self.config.read(str(settings_file_path), 'utf-8')
-        self.general_section_name = 'General'
-        self.general_section = self.config[self.general_section_name]
+        self.settings = RawConfigParser()
+        self.settings.optionxform = str
+        self.settings.read(str(settings_file_path), 'utf-8')
+
+        self.settings_general = self.settings['General']
 
         self.last_1c_exe_file_path = None
-        if '1C' in self.general_section:
-            self.last_1c_exe_file_path = Path(self.general_section['1C'])
+        if '1C' in self.settings_general:
+            self.last_1c_exe_file_path = Path(self.settings_general['1C'])
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
                 raise SettingsError('1C:Enterprise 8 does not exist!')
 
-        self.ib_dir_path = Path(self.general_section['IB'])
+        self.ib_dir_path = Path(self.settings_general['IB'])
         if not self.ib_dir_path.is_dir():
             raise SettingsError('Service information base does not exist!')
 
-        self.v8_reader_file_path = Path(self.general_section['V8Reader'])
+        self.v8_reader_file_path = Path(self.settings_general['V8Reader'])
         if not self.v8_reader_file_path.is_file():
             raise SettingsError('V8Reader does not exist!')
 
-        self.v8_unpack_file_path = Path(self.general_section['V8Unpack'])
+        self.v8_unpack_file_path = Path(self.settings_general['V8Unpack'])
         if not self.v8_unpack_file_path.is_file():
             raise SettingsError('V8Unpack does not exist!')
 
-        self.gcomp_file_path = Path(self.general_section['GComp'])
+        self.gcomp_file_path = Path(self.settings_general['GComp'])
         if not self.gcomp_file_path.is_file():
             raise SettingsError('GComp does not exist!')
 

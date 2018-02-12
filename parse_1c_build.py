@@ -7,9 +7,9 @@ import subprocess
 import tempfile
 
 from appdirs import site_data_dir, user_data_dir
-from commons_1c import SettingsError, get_last_1c_exe_file_path
+from commons_1c import get_last_1c_exe_file_path
 
-__version__ = '2.5.5'
+__version__ = '2.5.6'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -30,7 +30,7 @@ class Processor:
             if not settings_file_path.is_file():
                 settings_file_path = Path(site_data_dir(APP_NAME, APP_AUTHOR)) / settings_file_path.name
                 if not settings_file_path.is_file():
-                    raise SettingsError('Settings file does not exist!')
+                    raise SettingsException('Settings file does not exist!')
 
         self.settings = RawConfigParser()
         self.settings.optionxform = str
@@ -44,23 +44,23 @@ class Processor:
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
-                raise SettingsError('1C:Enterprise 8 does not exist!')
+                raise SettingsException('1C:Enterprise 8 does not exist!')
 
         self.ib_dir_path = Path(self.settings_general['IB'])
         if not self.ib_dir_path.is_dir():
-            raise SettingsError('Service information base does not exist!')
+            raise SettingsException('Service information base does not exist!')
 
         self.v8_reader_file_path = Path(self.settings_general['V8Reader'])
         if not self.v8_reader_file_path.is_file():
-            raise SettingsError('V8Reader does not exist!')
+            raise SettingsException('V8Reader does not exist!')
 
         self.v8_unpack_file_path = Path(self.settings_general['V8Unpack'])
         if not self.v8_unpack_file_path.is_file():
-            raise SettingsError('V8Unpack does not exist!')
+            raise SettingsException('V8Unpack does not exist!')
 
         self.gcomp_file_path = Path(self.settings_general['GComp'])
         if not self.gcomp_file_path.is_file():
-            raise SettingsError('GComp does not exist!')
+            raise SettingsException('GComp does not exist!')
 
     def run(self) -> None:
         pass
@@ -172,6 +172,10 @@ class Builder(Processor):
             output_file_path = Path(args.output)
 
         self.build(input_dir_path, output_file_path)
+
+
+class SettingsException(Exception):
+    pass
 
 
 def parse() -> None:

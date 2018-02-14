@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-from argparse import ArgumentParser
-from configparser import RawConfigParser
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+from argparse import ArgumentParser
+from configparser import RawConfigParser
+from pathlib import Path
 
 from appdirs import site_data_dir, user_data_dir
 from commons_1c import get_last_1c_exe_file_path
 
-__version__ = '2.5.6'
+__version__ = '2.5.7'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

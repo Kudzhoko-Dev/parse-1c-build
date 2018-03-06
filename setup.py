@@ -37,6 +37,7 @@ setup(
     install_requires=[
         'appdirs',
         'commons-1c',
+        'PyYAML',
         'yodl'
     ],
 

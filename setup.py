@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup
-
 import parse_1c_build
+from setuptools import setup
 
 setup(
     name='parse_1c_build',
@@ -37,7 +36,8 @@ setup(
 
     install_requires=[
         'appdirs',
-        'commons-1c'
+        'commons-1c',
+        'yodl'
     ],
 
     py_modules=['parse_1c_build'],

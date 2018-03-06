@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
+from argparse import ArgumentParser
+from collections import OrderedDict
+from pathlib import Path
 import shutil
 import subprocess
 import tempfile
-from argparse import ArgumentParser
-from configparser import RawConfigParser
-from pathlib import Path
 
 from appdirs import site_data_dir, user_data_dir
 from commons_1c import get_last_1c_exe_file_path
+import yaml
+import yodl
 
-__version__ = '2.5.7'
+__version__ = '2.6.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'
@@ -24,7 +26,7 @@ class Processor:
         self.argparser.add_argument('input', nargs=1)
         self.argparser.add_argument('output', nargs='?')
 
-        settings_file_path = Path('settings.ini')
+        settings_file_path = Path('settings.yaml')
         if not settings_file_path.is_file():
             settings_file_path = Path(user_data_dir(APP_NAME, APP_AUTHOR, roaming=True)) / settings_file_path.name
             if not settings_file_path.is_file():
@@ -32,35 +34,47 @@ class Processor:
                 if not settings_file_path.is_file():
                     raise SettingsException('Settings file does not exist!')
 
-        self.settings = RawConfigParser()
-        self.settings.optionxform = str
-        self.settings.read(str(settings_file_path), 'utf-8')
+        self.settings = OrderedDict()
 
-        self.settings_general = self.settings['General']
+        with settings_file_path.open(encoding='utf-8') as settings_file:
+            self.settings = yaml.load(settings_file, yodl.OrderedDictYAMLLoader)
+
+        if 'General' not in self.settings:
+            raise SettingsException('There is no dict \'General\' in settings!')
+
+        settings_general = self.settings['General']
 
         self.last_1c_exe_file_path = None
-        if '1C' in self.settings_general:
-            self.last_1c_exe_file_path = Path(self.settings_general['1C'])
+        if '1C' in settings_general:
+            self.last_1c_exe_file_path = Path(settings_general['1C'])
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
-                raise SettingsException('1C:Enterprise 8 does not exist!')
+                raise Exception('Couldn\'t find 1C:Enterprise 8!')
 
-        self.ib_dir_path = Path(self.settings_general['IB'])
+        if 'IB' not in settings_general:
+            raise SettingsException('There is no service information base in settings!')
+        self.ib_dir_path = Path(settings_general['IB'])
         if not self.ib_dir_path.is_dir():
-            raise SettingsException('Service information base does not exist!')
+            raise Exception('Service information base does not exist!')
 
-        self.v8_reader_file_path = Path(self.settings_general['V8Reader'])
+        if 'V8Reader' not in settings_general:
+            raise SettingsException('There is no V8Reader in settings!')
+        self.v8_reader_file_path = Path(settings_general['V8Reader'])
         if not self.v8_reader_file_path.is_file():
-            raise SettingsException('V8Reader does not exist!')
+            raise Exception('V8Reader does not exist!')
 
-        self.v8_unpack_file_path = Path(self.settings_general['V8Unpack'])
+        if 'V8Unpack' not in settings_general:
+            raise SettingsException('There is no V8Unpack in settings!')
+        self.v8_unpack_file_path = Path(settings_general['V8Unpack'])
         if not self.v8_unpack_file_path.is_file():
-            raise SettingsException('V8Unpack does not exist!')
+            raise Exception('V8Unpack does not exist!')
 
-        self.gcomp_file_path = Path(self.settings_general['GComp'])
+        if 'GComp' not in settings_general:
+            raise SettingsException('There is no GComp in settings!')
+        self.gcomp_file_path = Path(settings_general['GComp'])
         if not self.gcomp_file_path.is_file():
-            raise SettingsException('GComp does not exist!')
+            raise Exception('GComp does not exist!')
 
     def run(self) -> None:
         pass

@@ -1,8 +1,7 @@
 ; Letter case matters
 
-[General]
-1C=
-IB=d:\_Работа\Инструменты\1С\Скрипты\ib\
-V8Reader=d:\_Работа\Инструменты\1С\Скрипты\V8Reader\V8Reader.epf
-V8Unpack=d:\_Работа\Инструменты\1С\Скрипты\V8Unpack\V8Unpack.exe
-GComp=d:\_Работа\Инструменты\1С\GComp\Release\gcomp.exe
+General:
+  IB: d:\_Работа\Инструменты\1С\IB\
+  V8Reader: d:\_Работа\Разработка\V8Reader\V8Reader.epf
+  V8Unpack: d:\_Работа\Инструменты\1С\V8Unpack\V8Unpack.exe
+  GComp: d:\_Работа\Инструменты\1С\GComp\Release\gcomp.exe

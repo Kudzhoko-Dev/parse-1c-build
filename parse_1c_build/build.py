@@ -46,7 +46,7 @@ class Builder(Processor):
         if not exit_code == 0:
             raise Exception('Building "{}" is failed!'.format(str(output_file_path)))
 
-    def build(self, input_dir_path: Path, output_file_path: Path) -> None:
+    def build(self, input_dir_path: Path, output_file_path: Path, **kwargs) -> None:
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
 
         self.build_raw(temp_source_dir_path, output_file_path)

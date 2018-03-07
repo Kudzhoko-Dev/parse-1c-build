@@ -45,8 +45,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'parse-1c=parse_1c_build:parse',
-            'build-1c=parse_1c_build:build'
+            'p1cb=parse_1c_build:__main__:run'
         ]
     }
 )

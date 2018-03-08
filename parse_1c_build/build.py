@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 from typing import Any
 
-from parse_1c_build.base import Processor
+from parse_1c_build.base import Processor, SettingsException, get_settings
 
 
 class Builder(Processor):
@@ -35,6 +36,15 @@ class Builder(Processor):
 
         return temp_source_dir_path
 
+    def __init__(self, args: Any, settings: OrderedDict) -> None:
+        super().__init__(args, settings)
+
+        if 'V8Unpack' not in self.settings_general:
+            raise SettingsException('There is no V8Unpack in settings!')
+        self.v8_unpack_file_path = Path(self.settings_general['V8Unpack'])
+        if not self.v8_unpack_file_path.is_file():
+            raise Exception('V8Unpack does not exist!')
+
     def build_raw(self, temp_source_dir_path: Path, output_file_path: Path) -> None:
         exit_code = subprocess.check_call([
             str(self.v8_unpack_file_path),
@@ -44,7 +54,7 @@ class Builder(Processor):
         ])
 
         if not exit_code == 0:
-            raise Exception('Building "{}" is failed!'.format(str(output_file_path)))
+            raise Exception('Building \'{}\' is failed!'.format(str(output_file_path)))
 
     def build(self, input_dir_path: Path, output_file_path: Path, **kwargs) -> None:
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
@@ -53,22 +63,24 @@ class Builder(Processor):
 
         shutil.rmtree(str(temp_source_dir_path))
 
-    def run(self, args: Any) -> None:
-        input_dir_path = Path(args.input[0])
+    def run(self) -> None:
+        input_dir_path = Path(self.args.input[0])
 
-        if args.output is None:
+        if self.args.output is None:
             output_file_name = input_dir_path.name.rpartition('_')[0]
             parts = output_file_name.rpartition('_')
 
             output_file_path = Path('{}.{}'.format(parts[0], parts[2]))
         else:
-            output_file_path = Path(args.output)
+            output_file_path = Path(self.args.output)
 
         self.build(input_dir_path, output_file_path)
 
 
 def run(args: Any) -> None:
-    Builder().run(args)
+    settings = get_settings()
+    processor = Builder(args, settings)
+    processor.run()
 
 
 def add_subparser(subparsers: Any) -> None:

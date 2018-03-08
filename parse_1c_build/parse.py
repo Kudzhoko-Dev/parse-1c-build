@@ -1,14 +1,39 @@
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 from typing import Any
 
-from parse_1c_build.base import Processor
+from commons_1c import get_last_1c_exe_file_path
+from parse_1c_build.base import Processor, SettingsException, get_settings
 
 
 class Parser(Processor):
+    def __init__(self, args: Any, settings: OrderedDict) -> None:
+        super().__init__(args, settings)
+
+        self.last_1c_exe_file_path = None
+        if '1C' in self.settings_general:
+            self.last_1c_exe_file_path = Path(self.settings_general['1C'])
+        if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
+            self.last_1c_exe_file_path = get_last_1c_exe_file_path()
+            if self.last_1c_exe_file_path is None:
+                raise Exception('Couldn\'t find 1C:Enterprise 8!')
+
+        if 'IB' not in self.settings_general:
+            raise SettingsException('There is no service information base in settings!')
+        self.ib_dir_path = Path(self.settings_general['IB'])
+        if not self.ib_dir_path.is_dir():
+            raise Exception('Service information base does not exist!')
+
+        if 'V8Reader' not in self.settings_general:
+            raise SettingsException('There is no V8Reader in settings!')
+        self.v8_reader_file_path = Path(self.settings_general['V8Reader'])
+        if not self.v8_reader_file_path.is_file():
+            raise Exception('V8Reader does not exist!')
+
     def parse(self, input_file_path: Path, output_dir_path: Path) -> None:
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
@@ -38,23 +63,25 @@ class Parser(Processor):
 
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
         if not exit_code == 0:
-            raise Exception('Parsing "{}" is failed!'.format(str(input_file_path)))
+            raise Exception('Parsing \'{}\' is failed!'.format(str(input_file_path)))
 
         Path(bat_file.name).unlink()
 
-    def run(self, args: Any) -> None:
-        input_file_path = Path(args.input[0])
+    def run(self) -> None:
+        input_file_path = Path(self.args.input[0])
 
-        if args.output is None:
+        if self.args.output is None:
             output_dir_path = input_file_path.stem + '_' + input_file_path.suffix[1:] + '_src'
         else:
-            output_dir_path = Path(args.output)
+            output_dir_path = Path(self.args.output)
 
         self.parse(input_file_path, output_dir_path)
 
 
 def run(args: Any) -> None:
-    Parser().run(args)
+    settings = get_settings()
+    processor = Parser(args, settings)
+    processor.run()
 
 
 def add_subparser(subparsers: Any) -> None:

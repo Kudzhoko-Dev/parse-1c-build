@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from git_hooks_1c.cli import get_argparser
+from parse_1c_build.cli import get_argparser
 
 
 def run() -> None:

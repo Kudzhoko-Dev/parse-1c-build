@@ -7,7 +7,9 @@ import tempfile
 from typing import Any
 
 from commons_1c import get_last_1c_exe_file_path
-from parse_1c_build.base import Processor, SettingsException, get_settings
+from cujoko_commons import SettingsException, get_settings
+from parse_1c_build import APP_AUTHOR, APP_NAME
+from parse_1c_build.base import Processor
 
 
 class Parser(Processor):
@@ -79,7 +81,7 @@ class Parser(Processor):
 
 
 def run(args: Any) -> None:
-    settings = get_settings()
+    settings = get_settings(APP_NAME, APP_AUTHOR)
     processor = Parser(args, settings)
     processor.run()
 

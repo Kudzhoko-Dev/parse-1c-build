@@ -6,7 +6,9 @@ import subprocess
 import tempfile
 from typing import Any
 
-from parse_1c_build.base import Processor, SettingsException, get_settings
+from cujoko_commons import SettingsException, get_settings
+from parse_1c_build import APP_AUTHOR, APP_NAME
+from parse_1c_build.base import Processor
 
 
 class Builder(Processor):
@@ -78,7 +80,7 @@ class Builder(Processor):
 
 
 def run(args: Any) -> None:
-    settings = get_settings()
+    settings = get_settings(APP_NAME, APP_AUTHOR)
     processor = Builder(args, settings)
     processor.run()
 

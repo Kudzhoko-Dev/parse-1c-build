@@ -56,7 +56,7 @@ class Parser(Processor):
         if not self.v8_reader_file_path.is_file():
             raise Exception('V8Reader does not exist!')
 
-    def parse(self, input_file_path: Path, output_dir_path: Path) -> None:
+    def run(self, input_file_path: Path, output_dir_path: Path) -> None:
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
             input_file_path_suffix_lower = input_file_path.suffix.lower()
@@ -102,7 +102,7 @@ def run(args: Any) -> None:
     else:
         output_dir_path = Path(args.output)
 
-    processor.parse(input_file_path, output_dir_path)
+    processor.run(input_file_path, output_dir_path)
 
 
 def add_subparser(subparsers: Any) -> None:

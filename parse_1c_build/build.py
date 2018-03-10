@@ -63,7 +63,7 @@ class Builder(Processor):
         if not exit_code == 0:
             raise Exception('Building \'{}\' is failed!'.format(str(output_file_path)))
 
-    def build(self, input_dir_path: Path, output_file_path: Path) -> None:
+    def run(self, input_dir_path: Path, output_file_path: Path) -> None:
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
 
         self.build_raw(temp_source_dir_path, output_file_path)
@@ -85,7 +85,7 @@ def run(args: Any) -> None:
     else:
         output_file_path = Path(args.output)
 
-    processor.build(input_dir_path, output_file_path)
+    processor.run(input_dir_path, output_file_path)
 
 
 def add_subparser(subparsers: Any) -> None:

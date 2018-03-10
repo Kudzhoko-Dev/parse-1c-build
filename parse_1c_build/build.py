@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 from typing import Any
 
-from cujoko_commons import SettingsException, get_settings
+from commons import SettingsException, get_settings
 from parse_1c_build import APP_AUTHOR, APP_NAME
 from parse_1c_build.base import Processor
 
@@ -38,12 +37,18 @@ class Builder(Processor):
 
         return temp_source_dir_path
 
-    def __init__(self, args: Any, settings: OrderedDict) -> None:
-        super().__init__(args, settings)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
 
-        if 'V8Unpack' not in self.settings_general:
-            raise SettingsException('There is no V8Unpack in settings!')
-        self.v8_unpack_file_path = Path(self.settings_general['V8Unpack'])
+        if 'v8unpack' in kwargs:
+            self.v8_unpack_file_path = Path(kwargs['v8unpack'])
+        else:
+            settings = get_settings(APP_NAME, APP_AUTHOR)
+
+            if 'v8unpack' not in settings:
+                raise SettingsException('There is no V8Unpack in settings!')
+            self.v8_unpack_file_path = Path(settings['v8unpack'])
+
         if not self.v8_unpack_file_path.is_file():
             raise Exception('V8Unpack does not exist!')
 
@@ -58,31 +63,29 @@ class Builder(Processor):
         if not exit_code == 0:
             raise Exception('Building \'{}\' is failed!'.format(str(output_file_path)))
 
-    def build(self, input_dir_path: Path, output_file_path: Path, **kwargs) -> None:
+    def build(self, input_dir_path: Path, output_file_path: Path) -> None:
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
 
         self.build_raw(temp_source_dir_path, output_file_path)
 
         shutil.rmtree(str(temp_source_dir_path))
 
-    def run(self) -> None:
-        input_dir_path = Path(self.args.input[0])
-
-        if self.args.output is None:
-            output_file_name = input_dir_path.name.rpartition('_')[0]
-            parts = output_file_name.rpartition('_')
-
-            output_file_path = Path('{}.{}'.format(parts[0], parts[2]))
-        else:
-            output_file_path = Path(self.args.output)
-
-        self.build(input_dir_path, output_file_path)
-
 
 def run(args: Any) -> None:
-    settings = get_settings(APP_NAME, APP_AUTHOR)
-    processor = Builder(args, settings)
-    processor.run()
+    processor = Builder()
+
+    # Args
+    input_dir_path = Path(args.input[0])
+
+    if args.output is None:
+        output_file_name = input_dir_path.name.rpartition('_')[0]
+        parts = output_file_name.rpartition('_')
+
+        output_file_path = Path('{}.{}'.format(parts[0], parts[2]))
+    else:
+        output_file_path = Path(args.output)
+
+    processor.build(input_dir_path, output_file_path)
 
 
 def add_subparser(subparsers: Any) -> None:

@@ -1,38 +1,58 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 from typing import Any
 
+from commons import SettingsException, get_settings
 from commons_1c import get_last_1c_exe_file_path
-from cujoko_commons import SettingsException, get_settings
 from parse_1c_build import APP_AUTHOR, APP_NAME
 from parse_1c_build.base import Processor
 
 
 class Parser(Processor):
-    def __init__(self, args: Any, settings: OrderedDict) -> None:
-        super().__init__(args, settings)
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
 
-        self.last_1c_exe_file_path = None
-        if '1C' in self.settings_general:
-            self.last_1c_exe_file_path = Path(self.settings_general['1C'])
+        # 1C
+        if '1c' in kwargs:
+            self.last_1c_exe_file_path = Path(kwargs['1c'])
+        else:
+            settings = get_settings(APP_NAME, APP_AUTHOR)
+
+            self.last_1c_exe_file_path = None
+            if '1c' in settings:
+                self.last_1c_exe_file_path = Path(settings['1c'])
+
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
                 raise Exception('Couldn\'t find 1C:Enterprise 8!')
 
-        if 'IB' not in self.settings_general:
-            raise SettingsException('There is no service information base in settings!')
-        self.ib_dir_path = Path(self.settings_general['IB'])
+        # IB
+        if 'ib' in kwargs:
+            self.ib_dir_path = Path(kwargs['ib'])
+        else:
+            settings = get_settings(APP_NAME, APP_AUTHOR)
+
+            if 'ib' not in settings:
+                raise SettingsException('There is no service information base in settings!')
+            self.ib_dir_path = Path(settings['ib'])
+
         if not self.ib_dir_path.is_dir():
             raise Exception('Service information base does not exist!')
 
-        if 'V8Reader' not in self.settings_general:
-            raise SettingsException('There is no V8Reader in settings!')
-        self.v8_reader_file_path = Path(self.settings_general['V8Reader'])
+        # V8Reader
+        if 'v8reader' in kwargs:
+            self.v8_reader_file_path = Path(kwargs['v8reader'])
+        else:
+            settings = get_settings(APP_NAME, APP_AUTHOR)
+
+            if 'v8reader' not in settings:
+                raise SettingsException('There is no V8Reader in settings!')
+            self.v8_reader_file_path = Path(settings['v8reader'])
+
         if not self.v8_reader_file_path.is_file():
             raise Exception('V8Reader does not exist!')
 
@@ -53,7 +73,8 @@ class Parser(Processor):
             elif input_file_path_suffix_lower in ['.ert', '.md']:
                 input_file_path_ = input_file_path
 
-                if input_file_path_suffix_lower == '.md':  # fixme Тут что-то непонятное и скорее всего неработоспособное
+                # fixme Тут что-то непонятное и скорее всего неработоспособное
+                if input_file_path_suffix_lower == '.md':
                     temp_dir_name = tempfile.mkdtemp()
                     input_file_path_ = Path(shutil.copy(str(input_file_path_), temp_dir_name))
 
@@ -69,21 +90,19 @@ class Parser(Processor):
 
         Path(bat_file.name).unlink()
 
-    def run(self) -> None:
-        input_file_path = Path(self.args.input[0])
-
-        if self.args.output is None:
-            output_dir_path = input_file_path.stem + '_' + input_file_path.suffix[1:] + '_src'
-        else:
-            output_dir_path = Path(self.args.output)
-
-        self.parse(input_file_path, output_dir_path)
-
 
 def run(args: Any) -> None:
-    settings = get_settings(APP_NAME, APP_AUTHOR)
-    processor = Parser(args, settings)
-    processor.run()
+    processor = Parser()
+
+    # Args
+    input_file_path = Path(args.input[0])
+
+    if args.output is None:
+        output_dir_path = input_file_path.stem + '_' + input_file_path.suffix[1:] + '_src'
+    else:
+        output_dir_path = Path(args.output)
+
+    processor.parse(input_file_path, output_dir_path)
 
 
 def add_subparser(subparsers: Any) -> None:

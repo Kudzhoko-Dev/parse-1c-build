@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import parse_1c_build
 from setuptools import setup
+
+import parse_1c_build
 
 setup(
     name='parse_1c_build',
@@ -35,10 +36,13 @@ setup(
     keywords='1c parse build v8reader v8unpack gcomp',
 
     install_requires=[
-        'appdirs',
-        'commons-1c',
-        'PyYAML',
-        'yodl'
+        'commons',
+        'commons-1c'
+    ],
+
+    dependency_links=[
+        'http://github.com/Cujoko/commons/tarball/master',
+        'http://github.com/Cujoko/commons-1c/tarball/master'
     ],
 
     py_modules=['parse_1c_build'],

@@ -5,9 +5,8 @@ import subprocess
 import tempfile
 from typing import Any
 
-from commons import SettingsException, get_settings
+from commons import SettingsException
 from commons_1c import get_last_1c_exe_file_path
-from parse_1c_build import APP_AUTHOR, APP_NAME
 from parse_1c_build.base import Processor
 
 
@@ -19,11 +18,9 @@ class Parser(Processor):
         if '1c' in kwargs:
             self.last_1c_exe_file_path = Path(kwargs['1c'])
         else:
-            settings = get_settings(APP_NAME, APP_AUTHOR)
-
             self.last_1c_exe_file_path = None
-            if '1c' in settings:
-                self.last_1c_exe_file_path = Path(settings['1c'])
+            if '1c' in self.settings:
+                self.last_1c_exe_file_path = Path(self.settings['1c'])
 
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
@@ -34,11 +31,9 @@ class Parser(Processor):
         if 'ib' in kwargs:
             self.ib_dir_path = Path(kwargs['ib'])
         else:
-            settings = get_settings(APP_NAME, APP_AUTHOR)
-
-            if 'ib' not in settings:
+            if 'ib' not in self.settings:
                 raise SettingsException('There is no service information base in settings!')
-            self.ib_dir_path = Path(settings['ib'])
+            self.ib_dir_path = Path(self.settings['ib'])
 
         if not self.ib_dir_path.is_dir():
             raise Exception('Service information base does not exist!')
@@ -47,11 +42,9 @@ class Parser(Processor):
         if 'v8reader' in kwargs:
             self.v8_reader_file_path = Path(kwargs['v8reader'])
         else:
-            settings = get_settings(APP_NAME, APP_AUTHOR)
-
-            if 'v8reader' not in settings:
+            if 'v8reader' not in self.settings:
                 raise SettingsException('There is no V8Reader in settings!')
-            self.v8_reader_file_path = Path(settings['v8reader'])
+            self.v8_reader_file_path = Path(self.settings['v8reader'])
 
         if not self.v8_reader_file_path.is_file():
             raise Exception('V8Reader does not exist!')

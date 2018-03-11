@@ -5,8 +5,7 @@ import subprocess
 import tempfile
 from typing import Any
 
-from commons import SettingsException, get_settings
-from parse_1c_build import APP_AUTHOR, APP_NAME
+from commons import SettingsException
 from parse_1c_build.base import Processor
 
 
@@ -43,11 +42,9 @@ class Builder(Processor):
         if 'v8unpack' in kwargs:
             self.v8_unpack_file_path = Path(kwargs['v8unpack'])
         else:
-            settings = get_settings(APP_NAME, APP_AUTHOR)
-
-            if 'v8unpack' not in settings:
+            if 'v8unpack' not in self.settings:
                 raise SettingsException('There is no V8Unpack in settings!')
-            self.v8_unpack_file_path = Path(settings['v8unpack'])
+            self.v8_unpack_file_path = Path(self.settings['v8unpack'])
 
         if not self.v8_unpack_file_path.is_file():
             raise Exception('V8Unpack does not exist!')

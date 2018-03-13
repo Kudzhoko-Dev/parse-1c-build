@@ -8,9 +8,9 @@ from parse_1c_build import APP_AUTHOR, APP_NAME
 class Processor:
     def __init__(self, **kwargs) -> None:
         if 'settings_file' in kwargs:
-            self.settings = get_settings(APP_NAME, APP_AUTHOR, kwargs['settings_file'])
+            self.settings = get_settings(kwargs['settings_file'], app_name=APP_NAME, app_author=APP_AUTHOR)
         else:
-            self.settings = get_settings(APP_NAME, APP_AUTHOR)
+            self.settings = get_settings(app_name=APP_NAME, app_author=APP_AUTHOR)
 
         # GComp
         if 'gcomp' in kwargs:

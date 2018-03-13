@@ -18,6 +18,7 @@ class Processor:
         else:
             if 'gcomp' not in self.settings:
                 raise SettingsException('There is no GComp in settings!')
+
             self.gcomp_file_path = Path(self.settings['gcomp'])
 
         if not self.gcomp_file_path.is_file():

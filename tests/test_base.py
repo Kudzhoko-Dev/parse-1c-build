@@ -11,7 +11,7 @@ class MainTestCase(unittest.TestCase):
 
     def test_processor_1(self):
         with self.assertRaisesRegex(Exception, r'There is no GComp in settings!'):
-            Processor(gcomp='', settings_file='data/settings.yaml')
+            Processor(settings_file='tests/data/settings.yaml')
 
     def test_processor_2(self):
         with self.assertRaisesRegex(Exception, r'GComp does not exist!'):

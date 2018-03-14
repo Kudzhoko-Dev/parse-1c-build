@@ -15,7 +15,7 @@ class MainTestCase(unittest.TestCase):
     def test_parse(self):
         temp_dir_path = Path(tempfile.mkdtemp())
 
-        args = self.parser.parse_args('parse data\\test.epf {0}'.format(temp_dir_path).split())
+        args = self.parser.parse_args('parse tests/data/test.epf {0}'.format(temp_dir_path).split())
 
         parse_run(args)
 

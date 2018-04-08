@@ -2,7 +2,6 @@
 from pathlib import Path
 import subprocess
 import tempfile
-from typing import Any
 
 import shutil
 
@@ -12,7 +11,7 @@ from parse_1c_build.base import Processor
 
 class Builder(Processor):
     @staticmethod
-    def get_temp_source_dir_path(input_dir_path: Path) -> Path:
+    def get_temp_source_dir_path(input_dir_path):
         temp_source_dir_path = Path(tempfile.mkdtemp())
         renames_file_path = input_dir_path / 'renames.txt'
         with renames_file_path.open(encoding='utf-8-sig') as file:
@@ -30,7 +29,7 @@ class Builder(Processor):
                     shutil.copy(str(old_path), str(new_path))
         return temp_source_dir_path
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if 'v8unpack' in kwargs:
             self.v8_unpack_file_path = Path(kwargs['v8unpack'])
@@ -41,7 +40,7 @@ class Builder(Processor):
         if not self.v8_unpack_file_path.is_file():
             raise Exception('V8Unpack does not exist!')
 
-    def build_raw(self, temp_source_dir_path: Path, output_file_path: Path) -> None:
+    def build_raw(self, temp_source_dir_path, output_file_path):
         exit_code = subprocess.check_call([
             str(self.v8_unpack_file_path),
             '-B',
@@ -51,13 +50,13 @@ class Builder(Processor):
         if not exit_code == 0:
             raise Exception('Building \'{0}\' is failed!'.format(output_file_path))
 
-    def run(self, input_dir_path: Path, output_file_path: Path) -> None:
+    def run(self, input_dir_path, output_file_path):
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)
         self.build_raw(temp_source_dir_path, output_file_path)
         shutil.rmtree(str(temp_source_dir_path))
 
 
-def run(args: Any) -> None:
+def run(args):
     processor = Builder()
     # Args
     input_dir_path = Path(args.input[0])
@@ -70,7 +69,7 @@ def run(args: Any) -> None:
     processor.run(input_dir_path, output_file_path)
 
 
-def add_subparser(subparsers: Any) -> None:
+def add_subparser(subparsers):
     desc = 'Build files in a directory to 1C:Enterprise 7.7 file'
     subparser = subparsers.add_parser(
         Path(__file__).stem,

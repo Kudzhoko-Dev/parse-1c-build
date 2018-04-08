@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from parse_1c_build import __version__, build, parse
 
 
-def get_argparser() -> ArgumentParser:
+def get_argparser():
     parser = ArgumentParser(prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
     parser.add_argument(
         '-h', '--help',

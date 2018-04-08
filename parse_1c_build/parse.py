@@ -2,7 +2,6 @@
 from pathlib import Path
 import subprocess
 import tempfile
-from typing import Any
 
 import shutil
 
@@ -12,7 +11,7 @@ from parse_1c_build.base import Processor
 
 
 class Parser(Processor):
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # 1C
         if '1c' in kwargs:
@@ -44,7 +43,7 @@ class Parser(Processor):
         if not self.v8_reader_file_path.is_file():
             raise Exception('V8Reader does not exist!')
 
-    def run(self, input_file_path: Path, output_dir_path: Path) -> None:
+    def run(self, input_file_path, output_dir_path):
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
             input_file_path_suffix_lower = input_file_path.suffix.lower()
@@ -75,7 +74,7 @@ class Parser(Processor):
         Path(bat_file.name).unlink()
 
 
-def run(args: Any) -> None:
+def run(args):
     processor = Parser()
     # Args
     input_file_path = Path(args.input[0])
@@ -86,7 +85,7 @@ def run(args: Any) -> None:
     processor.run(input_file_path, output_dir_path)
 
 
-def add_subparser(subparsers: Any) -> None:
+def add_subparser(subparsers):
     desc = 'Parse 1C:Enterprise file in a directory'
     subparser = subparsers.add_parser(
         Path(__file__).stem,

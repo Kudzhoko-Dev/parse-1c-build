@@ -6,7 +6,7 @@ from parse_1c_build import APP_AUTHOR, APP_NAME
 
 
 class Processor:
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs):
         settings_file_path = Path('settings.yaml')
         if 'settings_file' in kwargs:
             settings_file_path = Path(kwargs['settings_file'])

@@ -5,7 +5,7 @@ import tempfile
 
 import shutil
 
-from commons.settings import SettingsException
+from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_path
 from parse_1c_build.base import Processor
 
@@ -23,25 +23,25 @@ class Parser(Processor):
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
-                raise Exception('Couldn\'t find 1C:Enterprise 8!')
+                raise FileNotFoundError('Couldn\'t find 1C:Enterprise 8')
         # IB
         if 'ib' in kwargs:
             self.ib_dir_path = Path(kwargs['ib'])
         else:
             if 'ib' not in self.settings:
-                raise SettingsException('There is no service information base in settings!')
+                raise SettingsError('There is no service information base in settings')
             self.ib_dir_path = Path(self.settings['ib'])
         if not self.ib_dir_path.is_dir():
-            raise Exception('Service information base does not exist!')
+            raise FileNotFoundError('Service information base does not exist')
         # V8Reader
         if 'v8reader' in kwargs:
             self.v8_reader_file_path = Path(kwargs['v8reader'])
         else:
             if 'v8reader' not in self.settings:
-                raise SettingsException('There is no V8Reader in settings!')
+                raise SettingsError('There is no V8Reader in settings')
             self.v8_reader_file_path = Path(self.settings['v8reader'])
         if not self.v8_reader_file_path.is_file():
-            raise Exception('V8Reader does not exist!')
+            raise FileNotFoundError('V8Reader does not exist')
 
     def run(self, input_file_path, output_dir_path):
         with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
@@ -70,7 +70,7 @@ class Parser(Processor):
                 ))
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
         if not exit_code == 0:
-            raise Exception('Parsing \'{0}\' is failed!'.format(str(input_file_path)))
+            raise Exception('Parsing \'{0}\' is failed'.format(str(input_file_path)))
         Path(bat_file.name).unlink()
 
 

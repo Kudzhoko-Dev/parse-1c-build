@@ -5,7 +5,7 @@ import tempfile
 
 import shutil
 
-from commons.settings import SettingsException
+from commons.settings import SettingsError
 from parse_1c_build.base import Processor
 
 
@@ -35,10 +35,10 @@ class Builder(Processor):
             self.v8_unpack_file_path = Path(kwargs['v8unpack'])
         else:
             if 'v8unpack' not in self.settings:
-                raise SettingsException('There is no V8Unpack in settings!')
+                raise SettingsError('There is no V8Unpack in settings')
             self.v8_unpack_file_path = Path(self.settings['v8unpack'])
         if not self.v8_unpack_file_path.is_file():
-            raise Exception('V8Unpack does not exist!')
+            raise FileNotFoundError('V8Unpack does not exist')
 
     def build_raw(self, temp_source_dir_path, output_file_path):
         exit_code = subprocess.check_call([
@@ -48,7 +48,7 @@ class Builder(Processor):
             str(output_file_path)
         ])
         if not exit_code == 0:
-            raise Exception('Building \'{0}\' is failed!'.format(output_file_path))
+            raise Exception('Building \'{0}\' is failed'.format(output_file_path))
 
     def run(self, input_dir_path, output_file_path):
         temp_source_dir_path = Builder.get_temp_source_dir_path(input_dir_path)

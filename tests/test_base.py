@@ -10,9 +10,9 @@ class MainTestCase(unittest.TestCase):
         self.parser = get_argparser()
 
     def test_processor_1(self):
-        with self.assertRaisesRegex(Exception, r'There is no GComp in settings!'):
+        with self.assertRaisesRegex(Exception, r'There is no GComp in settings'):
             Processor(settings_file='tests/data/settings.yaml')
 
     def test_processor_2(self):
-        with self.assertRaisesRegex(Exception, r'GComp does not exist!'):
+        with self.assertRaisesRegex(Exception, r'GComp does not exist'):
             Processor(gcomp='')

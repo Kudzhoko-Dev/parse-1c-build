@@ -6,8 +6,8 @@ import unittest
 
 import shutil
 
+from commons.compat import Path
 from parse_1c_build.cli import get_argparser
-from parse_1c_build.compat import Path
 from parse_1c_build.parse import run as parse_run
 
 

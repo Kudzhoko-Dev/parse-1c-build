@@ -4,9 +4,9 @@ from __future__ import unicode_literals
 import tempfile
 import unittest
 
+from commons.compat import Path
 from parse_1c_build.build import run as build_run
 from parse_1c_build.cli import get_argparser
-from parse_1c_build.compat import Path
 
 
 class MainTestCase(unittest.TestCase):

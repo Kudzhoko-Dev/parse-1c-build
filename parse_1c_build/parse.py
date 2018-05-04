@@ -6,10 +6,10 @@ import tempfile
 
 import shutil
 
+from commons.compat import Path
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_path
 from parse_1c_build.base import Processor
-from parse_1c_build.compat import Path
 
 
 class Parser(Processor):

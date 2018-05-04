@@ -8,8 +8,8 @@ import shutil
 
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_path
-from compat import Path
 from parse_1c_build.base import Processor
+from parse_1c_build.compat import Path
 
 
 class Parser(Processor):

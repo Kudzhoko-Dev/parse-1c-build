@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from commons.settings import SettingsError, get_settings
-from compat import Path
 from parse_1c_build import APP_AUTHOR, APP_NAME
+from parse_1c_build.compat import Path
 
 
 class Processor:

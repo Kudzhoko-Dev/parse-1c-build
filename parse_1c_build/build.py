@@ -7,8 +7,8 @@ import tempfile
 import shutil
 
 from commons.settings import SettingsError
-from compat import Path
 from parse_1c_build.base import Processor
+from parse_1c_build.compat import Path
 
 
 class Builder(Processor):

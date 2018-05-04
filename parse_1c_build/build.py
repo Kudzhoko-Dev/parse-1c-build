@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
+from __future__ import unicode_literals
+
 import subprocess
 import tempfile
 
 import shutil
 
 from commons.settings import SettingsError
+from compat import Path
 from parse_1c_build.base import Processor
 
 
@@ -30,7 +32,7 @@ class Builder(Processor):
         return temp_source_dir_path
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(Builder, self).__init__(**kwargs)
         if 'v8unpack' in kwargs:
             self.v8_unpack_file_path = Path(kwargs['v8unpack'])
         else:

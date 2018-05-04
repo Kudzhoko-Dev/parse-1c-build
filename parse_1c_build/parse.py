@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
+from __future__ import unicode_literals
+
 import subprocess
 import tempfile
 
@@ -7,12 +8,13 @@ import shutil
 
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_path
+from compat import Path
 from parse_1c_build.base import Processor
 
 
 class Parser(Processor):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(Parser, self).__init__(**kwargs)
         # 1C
         if '1c' in kwargs:
             self.last_1c_exe_file_path = Path(kwargs['1c'])

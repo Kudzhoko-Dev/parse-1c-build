@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
+from __future__ import unicode_literals
+
 import tempfile
 import unittest
 
+from compat import Path
 from parse_1c_build.build import run as build_run
 from parse_1c_build.cli import get_argparser
 

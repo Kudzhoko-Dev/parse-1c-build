@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from argparse import ArgumentParser
 
 from parse_1c_build import __version__, build, parse

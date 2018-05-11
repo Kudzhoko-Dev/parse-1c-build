@@ -33,7 +33,7 @@ setup(
     license='MIT',
     dependency_links=[
         'https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz#egg=commons-1.5.0',
-        'https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz#egg=commons-1c-1.6.0'
+        'https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz#egg=commons_1c-1.6.0'
     ],
     install_requires=[
         'commons>=1.5.0',

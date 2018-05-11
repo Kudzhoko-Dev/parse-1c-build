@@ -13,7 +13,6 @@ setup(
     author_email='cujoko@gmail.com',
     url='https://github.com/Cujoko/parse-1c-build',
     packages=find_packages(),
-    license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -30,5 +29,14 @@ setup(
         'console_scripts': [
             'p1cb=parse_1c_build.__main__:run'
         ]
-    }
+    },
+    license='MIT',
+    dependency_links=[
+        'https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz#egg=commons-1.5.0',
+        'https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz#egg=commons-1c-1.6.0'
+    ],
+    install_requires=[
+        'commons>=1.5.0',
+        'commons-1c>=1.6.0'
+    ]
 )

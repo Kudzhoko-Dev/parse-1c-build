@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import errno
+import shutil
 import subprocess
 import tempfile
-
-import shutil
 
 from commons.compat import Path
 from commons.settings import SettingsError
@@ -16,8 +16,8 @@ class Builder(Processor):
     def get_temp_source_dir_path(input_dir_path):
         temp_source_dir_path = Path(tempfile.mkdtemp())
         renames_file_path = input_dir_path / 'renames.txt'
-        with renames_file_path.open(encoding='utf-8-sig') as file:
-            for line in file:
+        with renames_file_path.open(encoding='utf-8-sig') as file_:
+            for line in file_:
                 names = line.split('-->')
                 new_path = temp_source_dir_path / names[0].strip()
                 new_dir_path = new_path.parent
@@ -40,7 +40,7 @@ class Builder(Processor):
                 raise SettingsError('There is no V8Unpack in settings')
             self.v8_unpack_file_path = Path(self.settings['v8unpack'])
         if not self.v8_unpack_file_path.is_file():
-            raise FileNotFoundError('V8Unpack does not exist')
+            raise IOError(errno.ENOENT, 'V8Unpack does not exist')
 
     def build_raw(self, temp_source_dir_path, output_file_path):
         exit_code = subprocess.check_call([

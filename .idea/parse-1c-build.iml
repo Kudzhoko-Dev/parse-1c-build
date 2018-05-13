@@ -10,7 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/parse_1c_build.egg-info" />
       <excludeFolder url="file://$MODULE_DIR$/tests/data" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.6 (parse-1c-build)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 2.7 (parse-1c-build-py2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="commons" />
     <orderEntry type="module" module-name="commons-1c" />

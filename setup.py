@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from setuptools import find_packages, setup
 
 import parse_1c_build
@@ -37,6 +35,7 @@ setup(
     ],
     install_requires=[
         'commons>=1.5.0',
-        'commons-1c>=1.6.0'
+        'commons-1c>=1.6.0',
+        'six>=1.11.0'
     ]
 )

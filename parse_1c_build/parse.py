@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import errno
+import shutil
 import subprocess
 import tempfile
-
-import shutil
 
 from commons.compat import Path
 from commons.settings import SettingsError
@@ -25,7 +25,7 @@ class Parser(Processor):
         if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
             self.last_1c_exe_file_path = get_last_1c_exe_file_path()
             if self.last_1c_exe_file_path is None:
-                raise FileNotFoundError('Couldn\'t find 1C:Enterprise 8')
+                raise IOError(errno.ENOENT, 'Couldn\'t find 1C:Enterprise 8')
         # IB
         if 'ib' in kwargs:
             self.ib_dir_path = Path(kwargs['ib'])
@@ -34,7 +34,7 @@ class Parser(Processor):
                 raise SettingsError('There is no service information base in settings')
             self.ib_dir_path = Path(self.settings['ib'])
         if not self.ib_dir_path.is_dir():
-            raise FileNotFoundError('Service information base does not exist')
+            raise IOError(errno.ENOENT, 'Service information base does not exist')
         # V8Reader
         if 'v8reader' in kwargs:
             self.v8_reader_file_path = Path(kwargs['v8reader'])
@@ -43,11 +43,11 @@ class Parser(Processor):
                 raise SettingsError('There is no V8Reader in settings')
             self.v8_reader_file_path = Path(self.settings['v8reader'])
         if not self.v8_reader_file_path.is_file():
-            raise FileNotFoundError('V8Reader does not exist')
+            raise IOError(errno.ENOENT, 'V8Reader does not exist')
 
     def run(self, input_file_path, output_dir_path):
-        with tempfile.NamedTemporaryFile('w', encoding='cp866', suffix='.bat', delete=False) as bat_file:
-            bat_file.write('@echo off\n')
+        with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
+            bat_file.write('@echo off\n'.encode('cp866'))
             input_file_path_suffix_lower = input_file_path.suffix.lower()
             if input_file_path_suffix_lower in ['.epf', '.erf']:
                 bat_file.write('"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
@@ -58,7 +58,7 @@ class Parser(Processor):
                         str(input_file_path),
                         str(output_dir_path)
                     )
-                ))
+                ).encode('cp866'))
             elif input_file_path_suffix_lower in ['.ert', '.md']:
                 input_file_path_ = input_file_path
                 # fixme Тут что-то непонятное и скорее всего неработоспособное
@@ -69,7 +69,7 @@ class Parser(Processor):
                     str(self.gcomp_file_path),
                     str(input_file_path_),
                     str(output_dir_path)
-                ))
+                ).encode('cp866'))
         exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
         if not exit_code == 0:
             raise Exception('Parsing \'{0}\' is failed'.format(str(input_file_path)))

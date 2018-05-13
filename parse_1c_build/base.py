@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import errno
+
 from commons.compat import Path
 from commons.settings import SettingsError, get_settings
 from parse_1c_build import APP_AUTHOR, APP_NAME
 
 
-class Processor:
+class Processor(object):
     def __init__(self, **kwargs):
         settings_file_path = Path('settings.yaml')
         if 'settings_file' in kwargs:
@@ -20,4 +22,4 @@ class Processor:
                 raise SettingsError('There is no GComp in settings')
             self.gcomp_file_path = Path(self.settings['gcomp'])
         if not self.gcomp_file_path.is_file():
-            raise FileNotFoundError('GComp does not exist')
+            raise IOError(errno.ENOENT, 'GComp does not exist')

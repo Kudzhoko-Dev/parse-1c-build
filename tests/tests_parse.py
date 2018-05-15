@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import tempfile
-import unittest
+from __future__ import absolute_import, unicode_literals
 
 import shutil
+import tempfile
+import unittest
 
 from commons.compat import Path
 from parse_1c_build.cli import get_argparser

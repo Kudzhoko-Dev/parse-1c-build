@@ -2,13 +2,13 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
+import os
 import shutil
 import subprocess
 import tempfile
 
-from commons.compat import Path
 from commons.settings import SettingsError
-from commons_1c.platform_ import get_last_1c_exe_file_path
+from commons_1c.platform_ import get_last_1c_exe_file_fullname
 from parse_1c_build.base import Processor
 
 
@@ -17,80 +17,81 @@ class Parser(Processor):
         super(Parser, self).__init__(**kwargs)
         # 1C
         if '1c' in kwargs:
-            self.last_1c_exe_file_path = Path(kwargs['1c'])
+            self.last_1c_exe_file_fullname = kwargs['1c']
         else:
-            self.last_1c_exe_file_path = None
+            self.last_1c_exe_file_fullname = None
             if '1c' in self.settings:
-                self.last_1c_exe_file_path = Path(self.settings['1c'])
-        if self.last_1c_exe_file_path is None or not self.last_1c_exe_file_path.is_file():
-            self.last_1c_exe_file_path = get_last_1c_exe_file_path()
-            if self.last_1c_exe_file_path is None:
+                self.last_1c_exe_file_fullname = self.settings['1c']
+        if self.last_1c_exe_file_fullname is None or not os.path.isfile(self.last_1c_exe_file_fullname):
+            self.last_1c_exe_file_fullname = get_last_1c_exe_file_fullname()
+            if self.last_1c_exe_file_fullname is None:
                 raise IOError(errno.ENOENT, 'Couldn\'t find 1C:Enterprise 8')
         # IB
         if 'ib' in kwargs:
-            self.ib_dir_path = Path(kwargs['ib'])
+            self.ib_dir_fullname = kwargs['ib']
         else:
             if 'ib' not in self.settings:
                 raise SettingsError('There is no service information base in settings')
-            self.ib_dir_path = Path(self.settings['ib'])
-        if not self.ib_dir_path.is_dir():
+            self.ib_dir_fullname = self.settings['ib']
+        if not os.path.isdir(self.ib_dir_fullname):
             raise IOError(errno.ENOENT, 'Service information base does not exist')
         # V8Reader
         if 'v8reader' in kwargs:
-            self.v8_reader_file_path = Path(kwargs['v8reader'])
+            self.v8_reader_file_fullname = kwargs['v8reader']
         else:
             if 'v8reader' not in self.settings:
                 raise SettingsError('There is no V8Reader in settings')
-            self.v8_reader_file_path = Path(self.settings['v8reader'])
-        if not self.v8_reader_file_path.is_file():
+            self.v8_reader_file_fullname = self.settings['v8reader']
+        if not os.path.isfile(self.v8_reader_file_fullname):
             raise IOError(errno.ENOENT, 'V8Reader does not exist')
 
-    def run(self, input_file_path, output_dir_path):
+    def run(self, input_file_fullname, output_dir_fullname):
         with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n'.encode('cp866'))
-            input_file_path_suffix_lower = input_file_path.suffix.lower()
-            if input_file_path_suffix_lower in ['.epf', '.erf']:
+            input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
+            if input_file_fullname_suffix_lower in ['.epf', '.erf']:
                 bat_file.write('"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
-                    str(self.last_1c_exe_file_path),
-                    str(self.ib_dir_path),
-                    str(self.v8_reader_file_path),
+                    self.last_1c_exe_file_fullname,
+                    self.ib_dir_fullname,
+                    self.v8_reader_file_fullname,
                     '/C"decompile;pathtocf;{0};pathout;{1};shutdown;convert-mxl2txt;"'.format(
-                        str(input_file_path),
-                        str(output_dir_path)
+                        input_file_fullname,
+                        output_dir_fullname
                     )
                 ).encode('cp866'))
-            elif input_file_path_suffix_lower in ['.ert', '.md']:
-                input_file_path_ = input_file_path
+            elif input_file_fullname_suffix_lower in ['.ert', '.md']:
+                input_file_fullname_ = input_file_fullname
                 # fixme Тут что-то непонятное и скорее всего неработоспособное
-                if input_file_path_suffix_lower == '.md':
-                    temp_dir_name = tempfile.mkdtemp()
-                    input_file_path_ = Path(shutil.copy(str(input_file_path_), temp_dir_name))
+                if input_file_fullname_suffix_lower == '.md':
+                    temp_dir_fullname = tempfile.mkdtemp()
+                    input_file_fullname_ = shutil.copy(input_file_fullname_, temp_dir_fullname)
                 bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
-                    str(self.gcomp_file_path),
-                    str(input_file_path_),
-                    str(output_dir_path)
+                    self.gcomp_file_fullname,
+                    input_file_fullname_,
+                    output_dir_fullname
                 ).encode('cp866'))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', str(bat_file.name)])
+        exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
         if not exit_code == 0:
-            raise Exception('Parsing \'{0}\' is failed'.format(str(input_file_path)))
-        Path(bat_file.name).unlink()
+            raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
+        os.remove(bat_file.name)
 
 
 def run(args):
     processor = Parser()
     # Args
-    input_file_path = Path(args.input[0])
+    input_file_fullname = args.input[0]
     if args.output is None:
-        output_dir_path = input_file_path.stem + '_' + input_file_path.suffix[1:] + '_src'
+        output_dir_fullname = (
+                os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
     else:
-        output_dir_path = Path(args.output)
-    processor.run(input_file_path, output_dir_path)
+        output_dir_fullname = args.output
+    processor.run(input_file_fullname, output_dir_fullname)
 
 
 def add_subparser(subparsers):
     desc = 'Parse 1C:Enterprise file in a directory'
     subparser = subparsers.add_parser(
-        Path(__file__).stem,
+        os.path.splitext(__file__)[0],
         help=desc,
         description=desc,
         add_help=False

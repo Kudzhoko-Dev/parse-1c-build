@@ -17,4 +17,4 @@ class MainTestCase(unittest.TestCase):
         temp_dir_fullname = tempfile.mkdtemp()
         args = self.parser.parse_args('parse tests/data/test.epf {0}'.format(temp_dir_fullname).split())
         parse_run(args)
-        shutil.rmtree(str(temp_dir_fullname))
+        shutil.rmtree(temp_dir_fullname)

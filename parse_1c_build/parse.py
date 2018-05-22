@@ -61,10 +61,10 @@ class Parser(Processor):
                 ).encode('cp866'))
             elif input_file_fullname_suffix_lower in ['.ert', '.md']:
                 input_file_fullname_ = input_file_fullname
-                # fixme Тут что-то непонятное и скорее всего неработоспособное
                 if input_file_fullname_suffix_lower == '.md':
                     temp_dir_fullname = tempfile.mkdtemp()
-                    input_file_fullname_ = shutil.copy(input_file_fullname_, temp_dir_fullname)
+                    input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
+                    shutil.copy(input_file_fullname, input_file_fullname_)
                 bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
                     self.gcomp_file_fullname,
                     input_file_fullname_,

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+import codecs
 import errno
 import os
 import shutil
@@ -16,9 +17,9 @@ class Builder(Processor):
     def get_temp_source_dir_fullname(input_dir_fullname):
         temp_source_dir_fullname = tempfile.mkdtemp()
         renames_file_fullname = os.path.join(input_dir_fullname, 'renames.txt')
-        with open(renames_file_fullname) as file_:
+        with codecs.open(renames_file_fullname, encoding='utf-8-sig') as file_:
             for line in file_:
-                names = line.encode('utf-8-sig').split('-->')
+                names = line.split('-->')
                 new_fullname = temp_source_dir_fullname / names[0].strip()
                 new_dir_fullname = os.path.abspath(os.path.join(new_fullname, os.pardir))
                 if not os.path.isdir(new_dir_fullname):

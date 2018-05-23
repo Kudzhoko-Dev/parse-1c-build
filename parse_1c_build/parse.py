@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 
+from commons.compat import u
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_fullname
 from parse_1c_build.base import Processor
@@ -62,7 +63,7 @@ class Parser(Processor):
             elif input_file_fullname_suffix_lower in ['.ert', '.md']:
                 input_file_fullname_ = input_file_fullname
                 if input_file_fullname_suffix_lower == '.md':
-                    temp_dir_fullname = tempfile.mkdtemp()
+                    temp_dir_fullname = u(tempfile.mkdtemp())
                     input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
                     shutil.copy(input_file_fullname, input_file_fullname_)
                 bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
@@ -70,10 +71,10 @@ class Parser(Processor):
                     input_file_fullname_,
                     output_dir_fullname
                 ).encode('cp866'))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
+        exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name)])
         if not exit_code == 0:
             raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
-        os.remove(bat_file.name)
+        os.remove(u(bat_file.name))
 
 
 def run(args):

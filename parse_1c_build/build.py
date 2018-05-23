@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import tempfile
 
+from commons.compat import u
 from commons.settings import SettingsError
 from parse_1c_build.base import Processor
 
@@ -15,7 +16,7 @@ from parse_1c_build.base import Processor
 class Builder(Processor):
     @staticmethod
     def get_temp_source_dir_fullname(input_dir_fullname):
-        temp_source_dir_fullname = tempfile.mkdtemp()
+        temp_source_dir_fullname = u(tempfile.mkdtemp())
         renames_file_fullname = os.path.join(input_dir_fullname, 'renames.txt')
         with codecs.open(renames_file_fullname, encoding='utf-8-sig') as file_:
             for line in file_:

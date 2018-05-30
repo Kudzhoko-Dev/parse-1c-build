@@ -6,10 +6,7 @@ import sys
 
 from parse_1c_build.core import run
 
-file_fullname = os.path.abspath(__file__)
-par1_dir_fullname = os.path.abspath(os.path.join(file_fullname, os.pardir))
-par2_dir_fullname = os.path.abspath(os.path.join(par1_dir_fullname, os.pardir))
-sys.path.insert(0, par2_dir_fullname)
+sys.path.insert(0, os.path.abspath(os.path.join(__file__, os.pardir, os.pardir)))
 
 if __name__ == '__main__':
     run()

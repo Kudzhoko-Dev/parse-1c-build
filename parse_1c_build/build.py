@@ -77,7 +77,7 @@ def run(args):
 def add_subparser(subparsers):
     desc = 'Build files in a directory to 1C:Enterprise 7.7 file'
     subparser = subparsers.add_parser(
-        os.path.splitext(__file__)[0],
+        os.path.splitext(os.path.basename(__file__))[0],
         help=desc,
         description=desc,
         add_help=False

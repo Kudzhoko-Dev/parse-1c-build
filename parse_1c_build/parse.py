@@ -92,7 +92,7 @@ def run(args):
 def add_subparser(subparsers):
     desc = 'Parse 1C:Enterprise file in a directory'
     subparser = subparsers.add_parser(
-        os.path.splitext(__file__)[0],
+        os.path.splitext(os.path.basename(__file__))[0],
         help=desc,
         description=desc,
         add_help=False

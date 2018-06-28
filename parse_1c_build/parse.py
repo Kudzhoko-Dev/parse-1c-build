@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import tempfile
 
-from commons.compat import u
+from commons.compat import s, u
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_fullname
 from parse_1c_build.base import Processor
@@ -47,11 +47,12 @@ class Parser(Processor):
             raise IOError(errno.ENOENT, 'V8Reader does not exist')
 
     def run(self, input_file_fullname, output_dir_fullname):
-        with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
-            bat_file.write('@echo off\n'.encode('cp866'))
-            input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
-            if input_file_fullname_suffix_lower in ['.epf', '.erf']:
-                bat_file.write('"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
+        temp_dir_fullname = ''
+        args_au = []
+        input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
+        if input_file_fullname_suffix_lower in ['.epf', '.erf']:
+            args_au += [
+                '"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
                     self.last_1c_exe_file_fullname,
                     self.ib_dir_fullname,
                     self.v8_reader_file_fullname,
@@ -59,22 +60,25 @@ class Parser(Processor):
                         input_file_fullname,
                         output_dir_fullname
                     )
-                ).encode('cp866'))
-            elif input_file_fullname_suffix_lower in ['.ert', '.md']:
-                input_file_fullname_ = input_file_fullname
-                if input_file_fullname_suffix_lower == '.md':
-                    temp_dir_fullname = u(tempfile.mkdtemp())
-                    input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
-                    shutil.copy(input_file_fullname, input_file_fullname_)
-                bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
+                )
+            ]
+        elif input_file_fullname_suffix_lower in ['.ert', '.md']:
+            input_file_fullname_ = input_file_fullname
+            temp_dir_fullname = u(tempfile.mkdtemp())
+            input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
+            shutil.copy(input_file_fullname, input_file_fullname_)
+            args_au += [
+                '"{0}" -d -F "{1}" -DD "{2}"'.format(
                     self.gcomp_file_fullname,
                     input_file_fullname_,
                     output_dir_fullname
-                ).encode('cp866'))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name)])
+                )
+            ]
+        exit_code = subprocess.check_call(s(args_au, encoding='cp1251'))
+        if temp_dir_fullname:
+            shutil.rmtree(temp_dir_fullname)
         if not exit_code == 0:
             raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
-        os.remove(u(bat_file.name))
 
 
 def run(args):

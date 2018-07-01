@@ -16,7 +16,7 @@ from parse_1c_build.base import Processor
 class Builder(Processor):
     @staticmethod
     def get_temp_source_dir_fullname(input_dir_fullname):
-        temp_source_dir_fullname = u(tempfile.mkdtemp())
+        temp_source_dir_fullname = u(tempfile.mkdtemp(), encoding='cp1251')
         renames_file_fullname = os.path.join(input_dir_fullname, 'renames.txt')
         with codecs.open(renames_file_fullname, encoding='utf-8-sig') as file_:
             for line in file_:
@@ -64,13 +64,13 @@ class Builder(Processor):
 def run(args):
     processor = Builder()
     # Args
-    input_dir_fullname = args.input[0]
-    if args.output is None:
+    input_dir_fullname = u(args.input[0], encoding='cp1251')
+    if u(args.output, encoding='cp1251') is None:
         output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
         parts = output_file_name.rpartition('_')
         output_file_fullname = '{0}.{1}'.format(parts[0], parts[2])
     else:
-        output_file_fullname = args.output
+        output_file_fullname = u(args.output, encoding='cp1251')
     processor.run(input_dir_fullname, output_file_fullname)
 
 

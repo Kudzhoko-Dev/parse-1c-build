@@ -15,7 +15,7 @@ class MainTestCase(unittest.TestCase):
         self.parser = get_argparser()
 
     def test_parse(self):
-        temp_dir_fullname = u(tempfile.mkdtemp())
+        temp_dir_fullname = u(tempfile.mkdtemp(), encoding='cp1251')
         args = self.parser.parse_args('parse tests/data/test.epf {0}'.format(temp_dir_fullname).split())
         parse_run(args)
         shutil.rmtree(temp_dir_fullname)

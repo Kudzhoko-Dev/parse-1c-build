@@ -19,4 +19,4 @@ class MainTestCase(unittest.TestCase):
 
     def test_processor_2(self):
         with assertRaisesRegex(self, Exception, r'GComp does not exist'):
-            Processor(gcomp='')
+            Processor(gcomp_file='')

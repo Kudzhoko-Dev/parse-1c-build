@@ -28,27 +28,27 @@ class Parser(Processor):
             if self.last_1c_exe_file_fullname is None:
                 raise IOError(errno.ENOENT, 'Couldn\'t find 1C:Enterprise 8')
         # IB
-        if 'ib' in kwargs:
-            self.ib_dir_fullname = kwargs['ib']
+        if 'ib_dir' in kwargs:
+            self.ib_dir_fullname = kwargs['ib_dir']
         else:
-            if 'ib' not in self.settings:
+            if 'ib_dir' not in self.settings:
                 raise SettingsError('There is no service information base in settings')
-            self.ib_dir_fullname = self.settings['ib']
+            self.ib_dir_fullname = self.settings['ib_dir']
         if not os.path.isdir(self.ib_dir_fullname):
             raise IOError(errno.ENOENT, 'Service information base does not exist')
         # V8Reader
-        if 'v8reader' in kwargs:
-            self.v8_reader_file_fullname = kwargs['v8reader']
+        if 'v8reader_file' in kwargs:
+            self.v8_reader_file_fullname = kwargs['v8reader_file']
         else:
-            if 'v8reader' not in self.settings:
+            if 'v8reader_file' not in self.settings:
                 raise SettingsError('There is no V8Reader in settings')
-            self.v8_reader_file_fullname = self.settings['v8reader']
+            self.v8_reader_file_fullname = self.settings['v8reader_file']
         if not os.path.isfile(self.v8_reader_file_fullname):
             raise IOError(errno.ENOENT, 'V8Reader does not exist')
 
     def run(self, input_file_fullname, output_dir_fullname):
         with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
-            bat_file.write('@echo off\n'.encode('cp866'))
+            bat_file.write('@echo off\n')
             input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
             if input_file_fullname_suffix_lower in ['.epf', '.erf']:
                 bat_file.write('"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
@@ -80,12 +80,12 @@ class Parser(Processor):
 def run(args):
     processor = Parser()
     # Args
-    input_file_fullname = u(args.input[0], encoding='cp1251')
+    input_file_fullname = os.path.abspath(u(args.input[0], encoding='cp1251'))
     if u(args.output, encoding='cp1251') is None:
-        output_dir_fullname = (
+        output_dir_fullname = os.path.abspath(
                 os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
     else:
-        output_dir_fullname = u(args.output, encoding='cp1251')
+        output_dir_fullname = os.path.abspath(u(args.output, encoding='cp1251'))
     processor.run(input_file_fullname, output_dir_fullname)
 
 

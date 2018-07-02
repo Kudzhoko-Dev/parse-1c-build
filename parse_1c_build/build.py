@@ -36,46 +36,64 @@ class Builder(Processor):
 
     def __init__(self, **kwargs):
         super(Builder, self).__init__(**kwargs)
-        if 'v8unpack' in kwargs:
-            self.v8_unpack_file_fullname = kwargs['v8unpack']
+        if 'v8unpack_file' in kwargs:
+            self.v8_unpack_file_fullname = kwargs['v8unpack_file']
         else:
-            if 'v8unpack' not in self.settings:
+            if 'v8unpack_file' not in self.settings:
                 raise SettingsError('There is no V8Unpack in settings')
-            self.v8_unpack_file_fullname = self.settings['v8unpack']
+            self.v8_unpack_file_fullname = self.settings['v8unpack_file']
         if not os.path.isfile(self.v8_unpack_file_fullname):
             raise IOError(errno.ENOENT, 'V8Unpack does not exist')
 
-    def build_raw(self, temp_source_dir_fullname, output_file_fullname):
-        exit_code = subprocess.check_call([
-            self.v8_unpack_file_fullname,
-            '-B',
-            temp_source_dir_fullname,
-            output_file_fullname
-        ])
+    def build_raw(self, input_dir_fullname, output_file_fullname, onec8=True):
+        bat_file = None
+        if onec8:
+            exit_code = subprocess.check_call([
+                self.v8_unpack_file_fullname,
+                '-B',
+                input_dir_fullname,
+                output_file_fullname
+            ])
+        else:
+            with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
+                bat_file.write('@echo off\n')
+                bat_file.write('"{0}" -c -F "{1}" -DD "{2}"'.format(
+                    self.gcomp_file_fullname,
+                    output_file_fullname,
+                    input_dir_fullname
+                ).encode('cp866'))
+                exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, encoding='cp1251')])
         if not exit_code == 0:
             raise Exception('Building \'{0}\' is failed'.format(output_file_fullname))
+        if bat_file:
+            os.remove(u(bat_file.name, encoding='cp1251'))
 
     def run(self, input_dir_fullname, output_file_fullname):
-        temp_source_dir_fullname = Builder.get_temp_source_dir_fullname(input_dir_fullname)
-        self.build_raw(temp_source_dir_fullname, output_file_fullname)
-        shutil.rmtree(temp_source_dir_fullname)
+        output_file_fullname_suxxix_lower = os.path.splitext(output_file_fullname)[1].lower()
+        if output_file_fullname_suxxix_lower in ['.epf', '.erf']:
+            temp_source_dir_fullname = Builder.get_temp_source_dir_fullname(input_dir_fullname)
+            self.build_raw(temp_source_dir_fullname, output_file_fullname)
+            shutil.rmtree(temp_source_dir_fullname)
+        elif output_file_fullname_suxxix_lower in ['.ert', '.md']:
+            # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
+            self.build_raw(input_dir_fullname, output_file_fullname, False)
 
 
 def run(args):
     processor = Builder()
     # Args
-    input_dir_fullname = u(args.input[0], encoding='cp1251')
+    input_dir_fullname = os.path.abspath(u(args.input[0], encoding='cp1251'))
     if u(args.output, encoding='cp1251') is None:
         output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
         parts = output_file_name.rpartition('_')
-        output_file_fullname = '{0}.{1}'.format(parts[0], parts[2])
+        output_file_fullname = os.path.abspath('{0}.{1}'.format(parts[0], parts[2]))
     else:
-        output_file_fullname = u(args.output, encoding='cp1251')
+        output_file_fullname = os.path.abspath(u(args.output, encoding='cp1251'))
     processor.run(input_dir_fullname, output_file_fullname)
 
 
 def add_subparser(subparsers):
-    desc = 'Build files in a directory to 1C:Enterprise 7.7 file'
+    desc = 'Build files in a directory to 1C:Enterprise file'
     subparser = subparsers.add_parser(
         os.path.splitext(os.path.basename(__file__))[0],
         help=desc,

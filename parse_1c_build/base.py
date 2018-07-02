@@ -15,11 +15,11 @@ class Processor(object):
             settings_file_name = kwargs['settings_file']
         self.settings = get_settings(settings_file_name, app_name=APP_NAME, app_author=APP_AUTHOR)
         # GComp
-        if 'gcomp' in kwargs:
-            self.gcomp_file_fullname = kwargs['gcomp']
+        if 'gcomp_file' in kwargs:
+            self.gcomp_file_fullname = kwargs['gcomp_file']
         else:
-            if 'gcomp' not in self.settings:
+            if 'gcomp_file' not in self.settings:
                 raise SettingsError('There is no GComp in settings')
-            self.gcomp_file_fullname = self.settings['gcomp']
+            self.gcomp_file_fullname = self.settings['gcomp_file']
         if not os.path.isfile(self.gcomp_file_fullname):
             raise IOError(errno.ENOENT, 'GComp does not exist')

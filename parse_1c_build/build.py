@@ -45,28 +45,35 @@ class Builder(Processor):
         if not os.path.isfile(self.v8_unpack_file_fullname):
             raise IOError(errno.ENOENT, 'V8Unpack does not exist')
 
-    def build_raw(self, input_dir_fullname, output_file_fullname, onec8=True):
-        bat_file = None
-        if onec8:
+    def build_raw(self, input_dir_fullname, output_file_fullname):
+        output_file_fullname_suxxix_lower = os.path.splitext(output_file_fullname)[1].lower()
+        if output_file_fullname_suxxix_lower in ['.epf', '.erf']:
             exit_code = subprocess.check_call([
                 self.v8_unpack_file_fullname,
                 '-B',
                 input_dir_fullname,
                 output_file_fullname
             ])
-        else:
+            if not exit_code == 0:
+                raise Exception('Building \'{0}\' is failed'.format(output_file_fullname))
+        elif output_file_fullname_suxxix_lower in ['.ert', '.md']:
             with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
                 bat_file.write('@echo off\n')
-                bat_file.write('"{0}" -c -F "{1}" -DD "{2}"'.format(
-                    self.gcomp_file_fullname,
+                bat_file.write('{0} '.format(self.gcomp_file_fullname).encode('cp866'))
+                if output_file_fullname_suxxix_lower == '.ert':
+                    bat_file.write('--external-report ')
+                elif output_file_fullname_suxxix_lower == '.md':
+                    bat_file.write('--meta-data ')
+                bat_file.write('-c -F "{0}" -DD "{1}"\n'.format(
                     output_file_fullname,
                     input_dir_fullname
                 ).encode('cp866'))
+                bat_file.close()
                 exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, encoding='cp1251')])
-        if not exit_code == 0:
-            raise Exception('Building \'{0}\' is failed'.format(output_file_fullname))
-        if bat_file:
-            os.remove(u(bat_file.name, encoding='cp1251'))
+                if not exit_code == 0:
+                    raise Exception('Building \'{0}\' is failed'.format(output_file_fullname))
+            if bat_file:
+                os.remove(u(bat_file.name, encoding='cp1251'))
 
     def run(self, input_dir_fullname, output_file_fullname):
         output_file_fullname_suxxix_lower = os.path.splitext(output_file_fullname)[1].lower()
@@ -76,7 +83,7 @@ class Builder(Processor):
             shutil.rmtree(temp_source_dir_fullname)
         elif output_file_fullname_suxxix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
-            self.build_raw(input_dir_fullname, output_file_fullname, False)
+            self.build_raw(input_dir_fullname, output_file_fullname)
 
 
 def run(args):

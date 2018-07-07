@@ -55,7 +55,7 @@ class Parser(Processor):
                     self.last_1c_exe_file_fullname,
                     self.ib_dir_fullname,
                     self.v8_reader_file_fullname,
-                    '/C "decompile;pathToCF;{0};pathOut;{1};convert-mxl2txt;"'.format(
+                    '/C "decompile;pathToCF;{0};pathOut;{1};shutdown;convert-mxl2txt;"'.format(
                         input_file_fullname,
                         output_dir_fullname
                     )

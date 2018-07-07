@@ -50,12 +50,12 @@ class Parser(Processor):
         with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
             bat_file.write('@echo off\n')
             input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
-            if input_file_fullname_suffix_lower in ['.epf', '.erf']:
-                bat_file.write('"{0}" /F"{1}" /DisableStartupMessages /Execute"{2}" {3}'.format(
+            if input_file_fullname_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
+                bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
                     self.last_1c_exe_file_fullname,
                     self.ib_dir_fullname,
                     self.v8_reader_file_fullname,
-                    '/C"decompile;pathtocf;{0};pathout;{1};shutdown;convert-mxl2txt;"'.format(
+                    '/C "decompile;pathToCF;{0};pathOut;{1};convert-mxl2txt;"'.format(
                         input_file_fullname,
                         output_dir_fullname
                     )

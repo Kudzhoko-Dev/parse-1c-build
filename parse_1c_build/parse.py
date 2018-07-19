@@ -10,7 +10,7 @@ import tempfile
 from commons.compat import u
 from commons.settings import SettingsError
 from commons_1c.platform_ import get_last_1c_exe_file_fullname
-from parse_1c_build.base import Processor
+from parse_1c_build.base import Processor, add_generic_arguments
 
 
 class Parser(Processor):
@@ -72,7 +72,7 @@ class Parser(Processor):
                     output_dir_fullname
                 ).encode('cp866'))
         exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, encoding='cp1251')])
-        if not exit_code == 0:
+        if exit_code != 0:
             raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
         os.remove(u(bat_file.name, encoding='cp1251'))
 
@@ -98,18 +98,4 @@ def add_subparser(subparsers):
         add_help=False
     )
     subparser.set_defaults(func=run)
-    subparser.add_argument(
-        '-h', '--help',
-        action='help',
-        help='Show this help message and exit'
-    )
-    # todo Добавить help
-    subparser.add_argument(
-        'input',
-        nargs=1
-    )
-    # todo Добавить help
-    subparser.add_argument(
-        'output',
-        nargs='?'
-    )
+    add_generic_arguments(subparser)

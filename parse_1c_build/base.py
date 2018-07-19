@@ -23,3 +23,21 @@ class Processor(object):
             self.gcomp_file_fullname = self.settings['gcomp_file']
         if not os.path.isfile(self.gcomp_file_fullname):
             raise IOError(errno.ENOENT, 'GComp does not exist')
+
+
+def add_generic_arguments(subparser):
+    subparser.add_argument(
+        '-h', '--help',
+        action='help',
+        help='Show this help message and exit'
+    )
+    # todo Добавить help
+    subparser.add_argument(
+        'input',
+        nargs=1
+    )
+    # todo Добавить help
+    subparser.add_argument(
+        'output',
+        nargs='?'
+    )

@@ -39,6 +39,6 @@ setup(
     install_requires=[
         'commons>=2.0.0',
         'commons-1c>=2.0.0',
-        'six==1.11.0'
+        'six>=1.11.0'
     ]
 )

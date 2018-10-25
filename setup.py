@@ -11,7 +11,7 @@ setup(
     description='Parse and build utilities for 1C:Enterprise',
     author='Cujoko',
     author_email='cujoko@gmail.com',
-    url='https://github.com/Cujoko/parse-1c-build',
+    url='https://gitlab.com/Cujoko/parse-1c-build',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 4 - Beta',

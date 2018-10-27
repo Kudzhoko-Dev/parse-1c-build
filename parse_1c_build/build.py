@@ -34,23 +34,23 @@ class Builder(Processor):
                     shutil.copy(old_fullname, new_fullname)
         return temp_source_dir_fullname
 
-    def __init__(self, **kwargs):
-        super(Builder, self).__init__(**kwargs)
+    def get_v8_unpack_file_fullname(self, **kwargs):
         if 'v8unpack_file' in kwargs:
-            self.v8_unpack_file_fullname = kwargs['v8unpack_file']
+            v8_unpack_file_fullname = kwargs['v8unpack_file']
         else:
             if 'v8unpack_file' not in self.settings:
                 raise SettingsError('There is no V8Unpack in settings')
-            self.v8_unpack_file_fullname = self.settings['v8unpack_file']
-        if not os.path.isfile(self.v8_unpack_file_fullname):
+            v8_unpack_file_fullname = self.settings.get('v8unpack_file', '')
+        if not os.path.isfile(v8_unpack_file_fullname):
             raise IOError(errno.ENOENT, 'V8Unpack does not exist')
+        return v8_unpack_file_fullname
 
     def run(self, input_dir_fullname, output_file_fullname):
         output_file_fullname_suffix_lower = os.path.splitext(output_file_fullname)[1].lower()
         if output_file_fullname_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
             temp_source_dir_fullname = Builder.get_temp_source_dir_fullname(input_dir_fullname)
             exit_code = subprocess.check_call([
-                self.v8_unpack_file_fullname,
+                self.get_v8_unpack_file_fullname(),
                 '-B',
                 temp_source_dir_fullname,
                 output_file_fullname
@@ -62,7 +62,7 @@ class Builder(Processor):
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
                 bat_file.write('@echo off\n')
-                bat_file.write('{0} '.format(self.gcomp_file_fullname).encode('cp866'))
+                bat_file.write('{0} '.format(self.get_gcomp_file_fullname()).encode('cp866'))
                 if output_file_fullname_suffix_lower == '.ert':
                     bat_file.write('--external-report ')
                 elif output_file_fullname_suffix_lower == '.md':

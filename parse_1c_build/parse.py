@@ -63,7 +63,7 @@ class Parser(Processor):
             elif input_file_fullname_suffix_lower in ['.ert', '.md']:
                 input_file_fullname_ = input_file_fullname
                 if input_file_fullname_suffix_lower == '.md':
-                    temp_dir_fullname = u(tempfile.mkdtemp(), encoding='cp1251')
+                    temp_dir_fullname = u(tempfile.mkdtemp(), 'cp1251')
                     input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
                     shutil.copy(input_file_fullname, input_file_fullname_)
                 bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
@@ -71,21 +71,21 @@ class Parser(Processor):
                     input_file_fullname_,
                     output_dir_fullname
                 ).encode('cp866'))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, encoding='cp1251')])
+        exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, 'cp1251')])
         if exit_code != 0:
             raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
-        os.remove(u(bat_file.name, encoding='cp1251'))
+        os.remove(u(bat_file.name, 'cp1251'))
 
 
 def run(args):
     processor = Parser()
     # Args
-    input_file_fullname = os.path.abspath(u(args.input[0], encoding='cp1251'))
-    if u(args.output, encoding='cp1251') is None:
+    input_file_fullname = os.path.abspath(u(args.input[0], 'cp1251'))
+    if u(args.output, 'cp1251') is None:
         output_dir_fullname = os.path.abspath(
                 os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
     else:
-        output_dir_fullname = os.path.abspath(u(args.output, encoding='cp1251'))
+        output_dir_fullname = os.path.abspath(u(args.output, 'cp1251'))
     processor.run(input_file_fullname, output_dir_fullname)
 
 

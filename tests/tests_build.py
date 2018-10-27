@@ -14,7 +14,7 @@ class MainTestCase(unittest.TestCase):
         self.parser = get_argparser()
 
     def test_build(self):
-        temp_file_fullname = u(tempfile.mkstemp()[1], encoding='cp1251')
+        temp_file_fullname = u(tempfile.mkstemp()[1], 'cp1251')
         args = self.parser.parse_args('build tests/data/test_epf_src {0}'.format(temp_file_fullname).split())
         build_run(args)
         # Не получается удалить временный файл, так как он занят каким-то процессом

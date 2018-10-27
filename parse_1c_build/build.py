@@ -16,7 +16,7 @@ from parse_1c_build.base import Processor, add_generic_arguments
 class Builder(Processor):
     @staticmethod
     def get_temp_source_dir_fullname(input_dir_fullname):
-        temp_source_dir_fullname = u(tempfile.mkdtemp(), encoding='cp1251')
+        temp_source_dir_fullname = u(tempfile.mkdtemp(), 'cp1251')
         renames_file_fullname = os.path.join(input_dir_fullname, 'renames.txt')
         with codecs.open(renames_file_fullname, encoding='utf-8-sig') as file_:
             for line in file_:
@@ -72,23 +72,23 @@ class Builder(Processor):
                     input_dir_fullname
                 ).encode('cp866'))
                 bat_file.close()
-                exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, encoding='cp1251')])
+                exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, 'cp1251')])
                 if exit_code != 0:
                     raise Exception('Building \'{0}\' is failed'.format(output_file_fullname))
             if bat_file:
-                os.remove(u(bat_file.name, encoding='cp1251'))
+                os.remove(u(bat_file.name, 'cp1251'))
 
 
 def run(args):
     processor = Builder()
     # Args
-    input_dir_fullname = os.path.abspath(u(args.input[0], encoding='cp1251'))
-    if u(args.output, encoding='cp1251') is None:
+    input_dir_fullname = os.path.abspath(u(args.input[0], 'cp1251'))
+    if u(args.output, 'cp1251') is None:
         output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
         parts = output_file_name.rpartition('_')
         output_file_fullname = os.path.abspath('{0}.{1}'.format(parts[0], parts[2]))
     else:
-        output_file_fullname = os.path.abspath(u(args.output, encoding='cp1251'))
+        output_file_fullname = os.path.abspath(u(args.output, 'cp1251'))
     processor.run(input_dir_fullname, output_file_fullname)
 
 

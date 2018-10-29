@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 from argparse import ArgumentParser
 
-from . import __version__, build, parse
+from parse_1c_build import __version__, build, parse
 
 
 def get_argparser():

@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import sys
 
-from .cli import get_argparser
+from parse_1c_build.cli import get_argparser
 
 
 def run():

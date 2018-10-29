@@ -40,9 +40,8 @@ setup(
     },
     license='MIT',
     install_requires=[
-        'commons @ https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz#egg=commons-2.1.0',
-        'commons-1c @ https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz'
-        '#egg=commons_1c-2.0.3',
+        'commons @ https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz',
+        'commons-1c @ https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz',
         'six>=1.11.0'
     ]
 )

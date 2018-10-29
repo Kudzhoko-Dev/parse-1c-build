@@ -7,6 +7,3 @@ from parse_1c_build.__about__ import __version__
 from parse_1c_build.build import Builder
 # noinspection PyUnresolvedReferences
 from parse_1c_build.parse import Parser
-
-APP_AUTHOR = 'util-1c'
-APP_NAME = 'parse-1c-build'

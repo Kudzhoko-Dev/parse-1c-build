@@ -5,7 +5,7 @@ import errno
 import os
 
 from commons.settings import SettingsError, get_settings
-from parse_1c_build import APP_AUTHOR, APP_NAME
+from . import APP_AUTHOR, APP_NAME
 
 
 class Processor(object):

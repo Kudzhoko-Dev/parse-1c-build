@@ -10,7 +10,7 @@ import tempfile
 from commons.compat import u
 from commons.settings import SettingsError
 from commons_1c import platform_
-from parse_1c_build.base import Processor, add_generic_arguments
+from .base import Processor, add_generic_arguments
 
 
 class Parser(Processor):

@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+import codecs
+import os
 
 from setuptools import find_packages, setup
 
-import parse_1c_build
+here = os.path.abspath(os.path.dirname(__file__))
+
+about = {}
+with codecs.open(os.path.join(here, 'parse_1c_build', '__about__.py'), 'r', 'utf-8') as f:
+    exec (f.read(), about)
 
 setup(
     name='parse_1c_build',
-    version=parse_1c_build.__version__,
+    version=about['__version__'],
     description='Parse and build utilities for 1C:Enterprise',
     author='Cujoko',
     author_email='cujoko@gmail.com',

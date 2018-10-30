@@ -82,13 +82,13 @@ class Builder(Processor):
 def run(args):
     processor = Builder()
     # Args
-    input_dir_fullname = os.path.abspath(u(args.input[0], 'cp1251'))
-    if u(args.output, 'cp1251') is None:
+    input_dir_fullname = os.path.abspath(args.input[0])
+    if args.output is None:
         output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
         parts = output_file_name.rpartition('_')
         output_file_fullname = os.path.abspath('{0}.{1}'.format(parts[0], parts[2]))
     else:
-        output_file_fullname = os.path.abspath(u(args.output, 'cp1251'))
+        output_file_fullname = os.path.abspath(args.output)
     processor.run(input_dir_fullname, output_file_fullname)
 
 

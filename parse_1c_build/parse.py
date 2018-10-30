@@ -81,12 +81,12 @@ class Parser(Processor):
 def run(args):
     processor = Parser()
     # Args
-    input_file_fullname = os.path.abspath(u(args.input[0], 'cp1251'))
-    if u(args.output, 'cp1251') is None:
+    input_file_fullname = os.path.abspath(args.input[0])
+    if args.output is None:
         output_dir_fullname = os.path.abspath(
             os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
     else:
-        output_dir_fullname = os.path.abspath(u(args.output, 'cp1251'))
+        output_dir_fullname = os.path.abspath(args.output)
     processor.run(input_file_fullname, output_dir_fullname)
 
 

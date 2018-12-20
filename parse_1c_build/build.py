@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 
 import codecs
 import errno
+import logging
 import os
 import shutil
 import subprocess
@@ -11,6 +12,8 @@ import tempfile
 from commons.compat import u
 from commons.settings import SettingsError
 from parse_1c_build.base import Processor, add_generic_arguments
+
+logger = logging.getLogger(__name__)
 
 
 class Builder(Processor):
@@ -80,16 +83,19 @@ class Builder(Processor):
 
 
 def run(args):
-    processor = Builder()
-    # Args
-    input_dir_fullname = os.path.abspath(args.input[0])
-    if args.output is None:
-        output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
-        parts = output_file_name.rpartition('_')
-        output_file_fullname = os.path.abspath('{0}.{1}'.format(parts[0], parts[2]))
-    else:
-        output_file_fullname = os.path.abspath(args.output)
-    processor.run(input_dir_fullname, output_file_fullname)
+    try:
+        processor = Builder()
+        # Args
+        input_dir_fullname = os.path.abspath(args.input[0])
+        if args.output is None:
+            output_file_name = os.path.basename(input_dir_fullname).rpartition('_')[0]
+            parts = output_file_name.rpartition('_')
+            output_file_fullname = os.path.abspath('{0}.{1}'.format(parts[0], parts[2]))
+        else:
+            output_file_fullname = os.path.abspath(args.output)
+        processor.run(input_dir_fullname, output_file_fullname)
+    except Exception as e:
+        logger.exception(e)
 
 
 def add_subparser(subparsers):

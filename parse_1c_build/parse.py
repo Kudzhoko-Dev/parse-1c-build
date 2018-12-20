@@ -2,6 +2,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
+import logging
 import os
 import shutil
 import subprocess
@@ -11,6 +12,8 @@ from commons.compat import u
 from commons.settings import SettingsError
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
+
+logger = logging.getLogger(__name__)
 
 
 class Parser(Processor):
@@ -79,15 +82,18 @@ class Parser(Processor):
 
 
 def run(args):
-    processor = Parser()
-    # Args
-    input_file_fullname = os.path.abspath(args.input[0])
-    if args.output is None:
-        output_dir_fullname = os.path.abspath(
-            os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
-    else:
-        output_dir_fullname = os.path.abspath(args.output)
-    processor.run(input_file_fullname, output_dir_fullname)
+    try:
+        processor = Parser()
+        # Args
+        input_file_fullname = os.path.abspath(args.input[0])
+        if args.output is None:
+            output_dir_fullname = os.path.abspath(
+                os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
+        else:
+            output_dir_fullname = os.path.abspath(args.output)
+        processor.run(input_file_fullname, output_dir_fullname)
+    except Exception as e:
+        logger.exception(e)
 
 
 def add_subparser(subparsers):

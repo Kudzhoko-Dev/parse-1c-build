@@ -27,8 +27,7 @@ class Builder(Processor):
                 new_fullname = temp_source_dir_fullname / names[0].strip()
                 new_dir_fullname = os.path.abspath(os.path.join(new_fullname, os.pardir))
                 if not os.path.isdir(new_dir_fullname):
-                    # fixme Нужно parents=True
-                    os.mkdir(new_dir_fullname)
+                    os.makedirs(new_dir_fullname)
                 old_fullname = os.path.join(input_dir_fullname, names[1].strip())
                 if os.path.isdir(old_fullname):
                     new_fullname = os.path.join(temp_source_dir_fullname, names[0].strip())

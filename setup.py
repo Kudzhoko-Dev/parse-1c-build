@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-
-import codecs
-import os
+from pathlib import Path
+from typing import Dict
 
 from setuptools import find_packages, setup
 
-here = os.path.abspath(os.path.dirname(__file__))
+here = Path(__file__).parent
 
-about = {}
-with codecs.open(os.path.join(here, 'parse_1c_build', '__about__.py'), 'r', 'utf-8') as f:
-    exec (f.read(), about)
+about: Dict[str] = {}
+with Path(here, 'parse_1c_build', '__about__.py').open() as f:
+    exec(f.read(), about)
 
 setup(
     name='parse_1c_build',
@@ -25,9 +23,6 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: Russian',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Topic :: Software Development',
         'Topic :: Utilities'
@@ -41,7 +36,6 @@ setup(
     license='MIT',
     install_requires=[
         'commons @ https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz',
-        'commons-1c @ https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz',
-        'six>=1.11.0'
+        'commons-1c @ https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz'
     ]
 )

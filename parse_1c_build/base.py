@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import errno
-import os
+from pathlib import Path
 
 from commons.settings import SettingsError, get_settings
 from parse_1c_build.__about__ import APP_AUTHOR, APP_NAME
@@ -10,24 +8,24 @@ from parse_1c_build.__about__ import APP_AUTHOR, APP_NAME
 
 class Processor(object):
     def __init__(self, **kwargs):
-        settings_file_name = 'settings.yaml'
-        if 'settings_file' in kwargs:
-            settings_file_name = kwargs['settings_file']
-        self.settings = get_settings(settings_file_name, app_name=APP_NAME, app_author=APP_AUTHOR)
+        settings_file_path = Path('settings.yaml')
+        if 'settings_file_path' in kwargs:
+            settings_file_path = Path(kwargs['settings_file_path'])
+        self.settings = get_settings(settings_file_path, app_name=APP_NAME, app_author=APP_AUTHOR)
 
-    def get_gcomp_file_fullname(self, **kwargs):
-        if 'gcomp_file' in kwargs:
-            gcomp_file_fullname = kwargs['gcomp_file']
+    def get_gcomp_file_fullpath(self, **kwargs) -> Path:
+        if 'gcomp_file_path' in kwargs:
+            gcomp_file_fullpath = Path(kwargs['gcomp_file_path'])
         else:
-            if 'gcomp_file' not in self.settings:
+            if 'gcomp_file_path' not in self.settings:
                 raise SettingsError('There is no GComp in settings')
-            gcomp_file_fullname = self.settings.get('gcomp_file', '')
-        if not os.path.isfile(gcomp_file_fullname):
+            gcomp_file_fullpath = Path(self.settings.get('gcomp_file_path', ''))
+        if not gcomp_file_fullpath.is_file():
             raise IOError(errno.ENOENT, 'GComp does not exist')
-        return gcomp_file_fullname
+        return gcomp_file_fullpath
 
 
-def add_generic_arguments(subparser):
+def add_generic_arguments(subparser) -> None:
     subparser.add_argument(
         '-h', '--help',
         action='help',

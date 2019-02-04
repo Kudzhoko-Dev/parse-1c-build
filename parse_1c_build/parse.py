@@ -1,105 +1,103 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 import errno
 import logging
-import os
-import shutil
+from pathlib import Path
 import subprocess
 import tempfile
 
-from commons.compat import u
+import shutil
+
 from commons.settings import SettingsError
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class Parser(Processor):
-    def get_last_1c_exe_file_fullname(self, **kwargs):
-        if '1c' in kwargs:
-            last_1c_exe_file_fullname = kwargs['1c']
+    def get_last_1c_exe_file_fullpath(self, **kwargs) -> Path:
+        if '1c_file_path' in kwargs:
+            last_1c_exe_file_fullpath = Path(kwargs['1c_file_path'])
         else:
-            last_1c_exe_file_fullname = self.settings.get('1c', '')
-        if not last_1c_exe_file_fullname or not os.path.isfile(last_1c_exe_file_fullname):
-            last_1c_exe_file_fullname = platform_.get_last_1c_exe_file_fullname()
-            if not last_1c_exe_file_fullname:
+            last_1c_exe_file_fullpath = Path(self.settings.get('1c_file_path', ''))
+        if not last_1c_exe_file_fullpath or not last_1c_exe_file_fullpath.is_file():
+            last_1c_exe_file_fullpath = platform_.get_last_1c_exe_file_fullpath()
+            if not last_1c_exe_file_fullpath:
                 raise IOError(errno.ENOENT, 'Couldn\'t find 1C:Enterprise 8')
-        return last_1c_exe_file_fullname
+        return last_1c_exe_file_fullpath
 
-    def get_ib_dir_fullname(self, **kwargs):
-        if 'ib_dir' in kwargs:
-            ib_dir_fullname = kwargs['ib_dir']
+    def get_ib_dir_fullpath(self, **kwargs) -> Path:
+        if 'ib_dir_path' in kwargs:
+            ib_dir_fullpath = Path(kwargs['ib_dir_path'])
         else:
-            if 'ib_dir' not in self.settings:
+            if 'ib_dir_path' not in self.settings:
                 raise SettingsError('There is no service information base in settings')
-            ib_dir_fullname = self.settings.get('ib_dir', '')
-        if not os.path.isdir(ib_dir_fullname):
+            ib_dir_fullpath = Path(self.settings.get('ib_dir_path', ''))
+        if not ib_dir_fullpath.is_dir():
             raise IOError(errno.ENOENT, 'Service information base does not exist')
-        return ib_dir_fullname
+        return ib_dir_fullpath
 
-    def get_v8_reader_file_fullname(self, **kwargs):
-        if 'v8reader_file' in kwargs:
-            v8_reader_file_fullname = kwargs['v8reader_file']
+    def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
+        if 'v8reader_file_path' in kwargs:
+            v8_reader_file_fullpath = Path(kwargs['v8reader_file_path'])
         else:
-            if 'v8reader_file' not in self.settings:
+            if 'v8reader_file_path' not in self.settings:
                 raise SettingsError('There is no V8Reader in settings')
-            v8_reader_file_fullname = self.settings.get('v8reader_file', '')
-        if not os.path.isfile(v8_reader_file_fullname):
+            v8_reader_file_fullpath = Path(self.settings.get('v8reader_file', ''))
+        if not v8_reader_file_fullpath.is_file():
             raise IOError(errno.ENOENT, 'V8Reader does not exist')
-        return v8_reader_file_fullname
+        return v8_reader_file_fullpath
 
-    def run(self, input_file_fullname, output_dir_fullname):
-        with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
+    def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:
+        with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
             bat_file.write('@echo off\n')
-            input_file_fullname_suffix_lower = os.path.splitext(input_file_fullname)[1].lower()
-            if input_file_fullname_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
+            input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
+            if input_file_fullpath_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
                 bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
-                    self.get_last_1c_exe_file_fullname(),
-                    self.get_ib_dir_fullname(),
-                    self.get_v8_reader_file_fullname(),
+                    self.get_last_1c_exe_file_fullpath(),
+                    self.get_ib_dir_fullpath(),
+                    self.get_v8_reader_file_fullpath(),
                     '/C "decompile;pathToCF;{0};pathOut;{1};shutdown;convert-mxl2txt;"'.format(
-                        input_file_fullname,
-                        output_dir_fullname
+                        input_file_fullpath,
+                        output_dir_fullpath
                     )
-                ).encode('cp866'))
-            elif input_file_fullname_suffix_lower in ['.ert', '.md']:
-                input_file_fullname_ = input_file_fullname
-                if input_file_fullname_suffix_lower == '.md':
-                    temp_dir_fullname = u(tempfile.mkdtemp(), 'cp1251')
-                    input_file_fullname_ = os.path.join(temp_dir_fullname, os.path.basename(input_file_fullname_))
-                    shutil.copy(input_file_fullname, input_file_fullname_)
+                ))
+            elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
+                input_file_fullpath_ = input_file_fullpath  # todo
+                if input_file_fullpath_suffix_lower == '.md':
+                    temp_dir_fullpath = Path(tempfile.mkdtemp())
+                    input_file_fullpath_ = Path(temp_dir_fullpath, input_file_fullpath_.name)
+                    shutil.copyfile(str(input_file_fullpath), str(input_file_fullpath_))
                 bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
-                    self.get_gcomp_file_fullname(),
-                    input_file_fullname_,
-                    output_dir_fullname
-                ).encode('cp866'))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', u(bat_file.name, 'cp1251')])
+                    self.get_gcomp_file_fullpath(),
+                    input_file_fullpath_,
+                    output_dir_fullpath
+                ))
+        exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
         if exit_code != 0:
-            raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullname))
-        os.remove(u(bat_file.name, 'cp1251'))
+            raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
+        Path(bat_file.name).unlink()
 
 
-def run(args):
+def run(args) -> None:
     try:
         processor = Parser()
         # Args
-        input_file_fullname = os.path.abspath(args.input[0])
+        input_file_fullpath = Path(args.input[0]).absolute()
         if args.output is None:
-            output_dir_fullname = os.path.abspath(
-                os.path.splitext(input_file_fullname)[0] + '_' + os.path.splitext(input_file_fullname)[1][1:] + '_src')
+            output_dir_fullpath = Path(
+                input_file_fullpath.parent, input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
         else:
-            output_dir_fullname = os.path.abspath(args.output)
-        processor.run(input_file_fullname, output_dir_fullname)
+            output_dir_fullpath = Path(args.output).absolute()
+        processor.run(input_file_fullpath, output_dir_fullpath)
     except Exception as e:
         logger.exception(e)
 
 
-def add_subparser(subparsers):
+def add_subparser(subparsers) -> None:
     desc = 'Parse 1C:Enterprise file in a directory'
     subparser = subparsers.add_parser(
-        os.path.splitext(os.path.basename(__file__))[0],
+        Path(__file__).stem,
         help=desc,
         description=desc,
         add_help=False

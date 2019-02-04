@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
 from argparse import ArgumentParser
 
 from commons.logging_ import add_logging_arguments
 from parse_1c_build import __version__, build, parse
 
 
-def get_argparser():
-    parser = ArgumentParser(prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
+def get_argparser() -> ArgumentParser:
+    parser = ArgumentParser(
+        prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
     parser.add_argument(
         '-h', '--help',
         action='help',

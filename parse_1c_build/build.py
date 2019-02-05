@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import errno
 import logging
 from pathlib import Path
 import subprocess
@@ -10,7 +9,7 @@ import shutil
 from commons.settings import SettingsError
 from parse_1c_build.base import Processor, add_generic_arguments
 
-logger: logging.Logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Builder(Processor):
@@ -41,7 +40,7 @@ class Builder(Processor):
                 raise SettingsError('There is no V8Unpack in settings')
             v8_unpack_file_fullpath = Path(self.settings.get('v8unpack_file_path', ''))
         if not v8_unpack_file_fullpath.is_file():
-            raise IOError(errno.ENOENT, 'V8Unpack does not exist')
+            raise FileExistsError('V8Unpack does not exist')
         return v8_unpack_file_fullpath
 
     def run(self, input_dir_fullpath: Path, output_file_fullpath: Path) -> None:

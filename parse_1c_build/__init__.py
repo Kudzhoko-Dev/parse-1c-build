@@ -10,4 +10,4 @@ from parse_1c_build.parse import Parser
 
 # noinspection PyUnresolvedReferences
 logging.getLogger().setLevel(logging.DEBUG)
-logger: logging.Logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)

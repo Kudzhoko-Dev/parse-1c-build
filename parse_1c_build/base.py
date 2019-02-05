@@ -13,13 +13,13 @@ class Processor(object):
         self.settings = get_settings(settings_file_path, app_name=APP_NAME, app_author=APP_AUTHOR)
 
     def get_gcomp_file_fullpath(self, **kwargs) -> Path:
-        gcomp_file_path = kwargs.get(
-            'gcomp_file_path', Path(self.settings.get('gcomp_file', 'GComp/Release/gcomp.exe')))
-        if not isinstance(gcomp_file_path, Path):
+        gcomp_file_fullpath = kwargs.get(
+            'gcomp_file_path', Path(self.settings.get('gcomp_file', 'GComp/Release/gcomp.exe'))).absolute()
+        if not isinstance(gcomp_file_fullpath, Path):
             raise SettingsError('Argument "GComp File Path" Incorrect')
-        if not gcomp_file_path.is_file():
-            raise FileExistsError('GComp Not Exist')
-        return gcomp_file_path
+        if not gcomp_file_fullpath.is_file():
+            raise FileExistsError('GComp Not Exists')
+        return gcomp_file_fullpath
 
 
 def add_generic_arguments(subparser) -> None:

@@ -14,31 +14,31 @@ logger = logging.getLogger(__name__)
 
 
 class Parser(Processor):
-    def get_1c_exe_file_path(self, **kwargs) -> Path:
-        onec_exe_file_path = kwargs.get(
-            '1c_file_path', Path(self.settings.get('1c_file', platform_.get_last_1c_exe_file_fullpath())))
-        if not isinstance(onec_exe_file_path, Path):
+    def get_1c_exe_file_fullpath(self, **kwargs) -> Path:
+        onec_exe_file_fullpath = kwargs.get(
+            '1c_file_path', Path(self.settings.get('1c_file', platform_.get_last_1c_exe_file_fullpath()))).absolute()
+        if not isinstance(onec_exe_file_fullpath, Path):
             raise SettingsError('Argument "1C File Path" Incorrect')
-        if not onec_exe_file_path.is_file():
-            raise FileExistsError('1C:Enterprise 8 Platform Not Exist')
-        return onec_exe_file_path
+        if not onec_exe_file_fullpath.is_file():
+            raise FileExistsError('1C:Enterprise 8 Platform Not Exists')
+        return onec_exe_file_fullpath
 
     def get_ib_dir_fullpath(self, **kwargs) -> Path:
-        ib_dir_path = kwargs.get('ib_dir_path', Path(self.settings.get('ib_dir', 'IB')))
-        if not isinstance(ib_dir_path, Path):
+        ib_dir_fullpath = kwargs.get('ib_dir_path', Path(self.settings.get('ib_dir', 'IB'))).absolute()
+        if not isinstance(ib_dir_fullpath, Path):
             raise SettingsError('Argument "IB Dir Path" Incorrect')
-        if not ib_dir_path.is_dir():
-            raise FileExistsError('Service Information Base Not Exist')
-        return ib_dir_path
+        if not ib_dir_fullpath.is_dir():
+            raise FileExistsError('Service Information Base Not Exists')
+        return ib_dir_fullpath
 
     def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
-        v8_reader_file_path = kwargs.get(
-            'v8reader_file_path', Path(self.settings.get('v8reader_file', 'V8Reader/V8Reader.epf')))
-        if not isinstance(v8_reader_file_path, Path):
+        v8_reader_file_fullpath = kwargs.get(
+            'v8reader_file_path', Path(self.settings.get('v8reader_file', 'V8Reader/V8Reader.epf'))).absolute()
+        if not isinstance(v8_reader_file_fullpath, Path):
             raise SettingsError('Argument "V8Reader File Path" Incorrect')
-        if not v8_reader_file_path.is_file():
-            raise FileExistsError('V8Reader Not Exist')
-        return v8_reader_file_path
+        if not v8_reader_file_fullpath.is_file():
+            raise FileExistsError('V8Reader Not Exists')
+        return v8_reader_file_fullpath
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:
         with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
@@ -46,7 +46,7 @@ class Parser(Processor):
             input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
             if input_file_fullpath_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
                 bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
-                    self.get_1c_exe_file_path(),
+                    self.get_1c_exe_file_fullpath(),
                     self.get_ib_dir_fullpath(),
                     self.get_v8_reader_file_fullpath(),
                     '/C "decompile;pathToCF;{0};pathOut;{1};shutdown;convert-mxl2txt;"'.format(

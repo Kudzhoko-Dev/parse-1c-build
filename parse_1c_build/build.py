@@ -33,14 +33,12 @@ class Builder(Processor):
         return temp_source_dir_fullpath
 
     def get_v8_unpack_file_fullpath(self, **kwargs) -> Path:
-        if 'v8unpack_file_path' in kwargs:
-            v8_unpack_file_fullpath = Path(kwargs['v8unpack_file_path'])
-        else:
-            if 'v8unpack_file_path' not in self.settings:
-                raise SettingsError('There is no V8Unpack in settings')
-            v8_unpack_file_fullpath = Path(self.settings.get('v8unpack_file_path', ''))
+        v8_unpack_file_fullpath = kwargs.get(
+            'v8unpack_file_path', Path(self.settings.get('v8unpack_file', 'V8Unpack/V8Unpack.exe'))).absolute()
+        if not isinstance(v8_unpack_file_fullpath, Path):
+            raise SettingsError('Argument "V8Unpack File Path" Incorrect')
         if not v8_unpack_file_fullpath.is_file():
-            raise FileExistsError('V8Unpack does not exist')
+            raise FileExistsError('V8Unpack Not Exists')
         return v8_unpack_file_fullpath
 
     def run(self, input_dir_fullpath: Path, output_file_fullpath: Path) -> None:

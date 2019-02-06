@@ -6,7 +6,7 @@ import tempfile
 
 import shutil
 
-from commons.settings import SettingsError
+from commons.settings import get_path_attribute
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
 
@@ -15,29 +15,18 @@ logger = logging.getLogger(__name__)
 
 class Parser(Processor):
     def get_1c_exe_file_fullpath(self, **kwargs) -> Path:
-        onec_exe_file_fullpath = kwargs.get(
-            '1c_file_path', Path(self.settings.get('1c_file', platform_.get_last_1c_exe_file_fullpath()))).absolute()
-        if not isinstance(onec_exe_file_fullpath, Path):
-            raise SettingsError('Argument "1C File Path" Incorrect')
-        if not onec_exe_file_fullpath.is_file():
-            raise FileExistsError('1C:Enterprise 8 Platform Not Exists')
+        onec_exe_file_fullpath = get_path_attribute(
+            kwargs, '1c_file_path', default_path=platform_.get_last_1c_exe_file_fullpath(), is_dir=False)
         return onec_exe_file_fullpath
 
     def get_ib_dir_fullpath(self, **kwargs) -> Path:
-        ib_dir_fullpath = kwargs.get('ib_dir_path', Path(self.settings.get('ib_dir', 'IB'))).absolute()
-        if not isinstance(ib_dir_fullpath, Path):
-            raise SettingsError('Argument "IB Dir Path" Incorrect')
-        if not ib_dir_fullpath.is_dir():
-            raise FileExistsError('Service Information Base Not Exists')
+        ib_dir_fullpath = get_path_attribute(
+            kwargs, 'ib_dir_path', self.settings, 'ib_dir', Path('IB'), create_dir=False)
         return ib_dir_fullpath
 
     def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
-        v8_reader_file_fullpath = kwargs.get(
-            'v8reader_file_path', Path(self.settings.get('v8reader_file', 'V8Reader/V8Reader.epf'))).absolute()
-        if not isinstance(v8_reader_file_fullpath, Path):
-            raise SettingsError('Argument "V8Reader File Path" Incorrect')
-        if not v8_reader_file_fullpath.is_file():
-            raise FileExistsError('V8Reader Not Exists')
+        v8_reader_file_fullpath = get_path_attribute(
+            kwargs, 'v8reader_file_path', self.settings, 'v8reader_file', Path('V8Reader/V8Reader.epf'), False)
         return v8_reader_file_fullpath
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:

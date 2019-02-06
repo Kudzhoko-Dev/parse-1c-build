@@ -6,7 +6,7 @@ import tempfile
 
 import shutil
 
-from commons.settings import SettingsError
+from commons.settings import get_path_attribute
 from parse_1c_build.base import Processor, add_generic_arguments
 
 logger = logging.getLogger(__name__)
@@ -33,12 +33,8 @@ class Builder(Processor):
         return temp_source_dir_fullpath
 
     def get_v8_unpack_file_fullpath(self, **kwargs) -> Path:
-        v8_unpack_file_fullpath = kwargs.get(
-            'v8unpack_file_path', Path(self.settings.get('v8unpack_file', 'V8Unpack/V8Unpack.exe'))).absolute()
-        if not isinstance(v8_unpack_file_fullpath, Path):
-            raise SettingsError('Argument "V8Unpack File Path" Incorrect')
-        if not v8_unpack_file_fullpath.is_file():
-            raise FileExistsError('V8Unpack Not Exists')
+        v8_unpack_file_fullpath = get_path_attribute(
+            kwargs, 'v8unpack_file_path', self.settings, 'v8unpack_file', Path('V8Unpack/V8Unpack.exe'), False)
         return v8_unpack_file_fullpath
 
     def run(self, input_dir_fullpath: Path, output_file_fullpath: Path) -> None:

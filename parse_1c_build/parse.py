@@ -15,34 +15,41 @@ logger = logging.getLogger(__name__)
 
 class Parser(Processor):
     def get_1c_exe_file_fullpath(self, **kwargs) -> Path:
-        onec_exe_file_fullpath = get_path_attribute(
+        return get_path_attribute(
             kwargs, '1c_file_path', default_path=platform_.get_last_1c_exe_file_fullpath(), is_dir=False)
-        return onec_exe_file_fullpath
 
     def get_ib_dir_fullpath(self, **kwargs) -> Path:
-        ib_dir_fullpath = get_path_attribute(
+        return get_path_attribute(
             kwargs, 'ib_dir_path', self.settings, 'ib_dir', Path('IB'), create_dir=False)
-        return ib_dir_fullpath
 
     def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
-        v8_reader_file_fullpath = get_path_attribute(
+        return get_path_attribute(
             kwargs, 'v8reader_file_path', self.settings, 'v8reader_file', Path('V8Reader/V8Reader.epf'), False)
-        return v8_reader_file_fullpath
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:
         with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
             bat_file.write('@echo off\n')
             input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
-            if input_file_fullpath_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
-                bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
-                    self.get_1c_exe_file_fullpath(),
-                    self.get_ib_dir_fullpath(),
-                    self.get_v8_reader_file_fullpath(),
-                    '/C "decompile;pathToCF;{0};pathOut;{1};shutdown;convert-mxl2txt;"'.format(
-                        input_file_fullpath,
-                        output_dir_fullpath
-                    )
-                ))
+            if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
+                if self.unpack_only:
+                    exit_code = subprocess.check_call([
+                        str(self.get_v8_unpack_file_fullpath()),
+                        '-P',
+                        str(input_file_fullpath),
+                        str(output_dir_fullpath)
+                    ])
+                    if exit_code != 0:
+                        raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
+                else:
+                    bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
+                        self.get_1c_exe_file_fullpath(),
+                        self.get_ib_dir_fullpath(),
+                        self.get_v8_reader_file_fullpath(),
+                        '/C "decompile;pathToCF;{0};pathOut;{1};shutdown;convert-mxl2txt;"'.format(
+                            input_file_fullpath,
+                            output_dir_fullpath
+                        )
+                    ))
             elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
                 input_file_fullpath_ = input_file_fullpath  # todo
                 if input_file_fullpath_suffix_lower == '.md':

@@ -1,4 +1,4 @@
-gcomp: d:\_Работа\Инструменты\1С\GComp\Release\gcomp.exe
-ib: d:\_Работа\Инструменты\1С\IB\
-v8reader: d:\_Работа\Разработка\V8Reader\V8Reader.epf
-v8unpack: d:\_Работа\Инструменты\1С\V8Unpack\V8Unpack.exe
+gcomp_file: d:\Work\Tools\1С\GComp\Release\gcomp.exe
+ib_dir: d:\Work\Tools\1С\IB\
+v8reader_file: d:\Dev\1С\V8Reader\V8Reader.epf
+v8unpack_file: d:\Work\Tools\1С\V8Unpack\V8Unpack.exe

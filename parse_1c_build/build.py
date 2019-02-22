@@ -6,7 +6,6 @@ import tempfile
 
 import shutil
 
-from commons.settings import get_path_attribute
 from parse_1c_build.base import Processor, add_generic_arguments
 
 logger = logging.getLogger(__name__)
@@ -32,24 +31,27 @@ class Builder(Processor):
                     shutil.copy(old_fullpath, new_fullpath)
         return temp_source_dir_fullpath
 
-    def get_v8_unpack_file_fullpath(self, **kwargs) -> Path:
-        v8_unpack_file_fullpath = get_path_attribute(
-            kwargs, 'v8unpack_file_path', self.settings, 'v8unpack_file', Path('V8Unpack/V8Unpack.exe'), False)
-        return v8_unpack_file_fullpath
-
     def run(self, input_dir_fullpath: Path, output_file_fullpath: Path) -> None:
         output_file_fullpath_suffix_lower = output_file_fullpath.suffix.lower()
-        if output_file_fullpath_suffix_lower in ['.cf', '.cfu', '.epf', '.erf']:
-            temp_source_dir_fullpath = Builder.get_temp_source_dir_fullpath(input_dir_fullpath)
-            exit_code = subprocess.check_call([
-                self.get_v8_unpack_file_fullpath(),
-                '-B',
-                str(temp_source_dir_fullpath),
-                str(output_file_fullpath)
-            ])
+        if output_file_fullpath_suffix_lower in ['.epf', '.erf']:
+            if self.unpack_only:
+                exit_code = subprocess.check_call([
+                    str(self.get_v8_unpack_file_fullpath()),
+                    '-B',
+                    str(input_dir_fullpath),
+                    str(output_file_fullpath)
+                ])
+            else:
+                temp_source_dir_fullpath = Builder.get_temp_source_dir_fullpath(input_dir_fullpath)
+                exit_code = subprocess.check_call([
+                    str(self.get_v8_unpack_file_fullpath()),
+                    '-B',
+                    str(temp_source_dir_fullpath),
+                    str(output_file_fullpath)
+                ])
+                shutil.rmtree(temp_source_dir_fullpath)
             if exit_code != 0:
                 raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
-            shutil.rmtree(temp_source_dir_fullpath)
         elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:

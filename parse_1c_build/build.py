@@ -54,9 +54,9 @@ class Builder(Processor):
                 raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
         elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
-            with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False) as bat_file:
+            with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
                 bat_file.write('@echo off\n')
-                bat_file.write('{0} '.format(self.get_gcomp_file_fullpath()).encode('cp866'))
+                bat_file.write('{0} '.format(self.get_gcomp_file_fullpath()))
                 if output_file_fullpath_suffix_lower == '.ert':
                     bat_file.write('--external-report ')
                 elif output_file_fullpath_suffix_lower == '.md':
@@ -64,7 +64,7 @@ class Builder(Processor):
                 bat_file.write('-c -F "{0}" -DD "{1}"\n'.format(
                     output_file_fullpath,
                     input_dir_fullpath
-                ).encode('cp866'))
+                ))
                 bat_file.close()
                 exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
                 if exit_code != 0:

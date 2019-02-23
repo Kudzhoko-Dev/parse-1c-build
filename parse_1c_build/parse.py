@@ -27,20 +27,20 @@ class Parser(Processor):
             kwargs, 'v8reader_file_path', self.settings, 'v8reader_file', Path('V8Reader/V8Reader.epf'), False)
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:
-        with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
-            bat_file.write('@echo off\n')
-            input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
-            if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
-                if self.unpack_only:
-                    exit_code = subprocess.check_call([
-                        str(self.get_v8_unpack_file_fullpath()),
-                        '-P',
-                        str(input_file_fullpath),
-                        str(output_dir_fullpath)
-                    ])
-                    if exit_code != 0:
-                        raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
-                else:
+        input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
+        if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
+            if self.unpack_only:
+                exit_code = subprocess.check_call([
+                    str(self.get_v8_unpack_file_fullpath()),
+                    '-P',
+                    str(input_file_fullpath),
+                    str(output_dir_fullpath)
+                ])
+                if exit_code != 0:
+                    raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
+            else:
+                with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
+                    bat_file.write('@echo off\n')
                     bat_file.write('"{0}" /F "{1}" /DisableStartupMessages /Execute "{2}" {3}'.format(
                         self.get_1c_exe_file_fullpath(),
                         self.get_ib_dir_fullpath(),
@@ -50,21 +50,23 @@ class Parser(Processor):
                             output_dir_fullpath
                         )
                     ))
-            elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
-                input_file_fullpath_ = input_file_fullpath  # todo
-                if input_file_fullpath_suffix_lower == '.md':
-                    temp_dir_fullpath = Path(tempfile.mkdtemp())
-                    input_file_fullpath_ = Path(temp_dir_fullpath, input_file_fullpath_.name)
-                    shutil.copyfile(str(input_file_fullpath), str(input_file_fullpath_))
-                bat_file.write('"{0}" -d -F "{1}" -DD "{2}"'.format(
-                    self.get_gcomp_file_fullpath(),
-                    input_file_fullpath_,
-                    output_dir_fullpath
-                ))
-        exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
-        if exit_code != 0:
-            raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
-        Path(bat_file.name).unlink()
+                Path(bat_file.name).unlink()
+        elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
+            input_file_fullpath_ = input_file_fullpath  # todo
+            if input_file_fullpath_suffix_lower == '.md':
+                temp_dir_fullpath = Path(tempfile.mkdtemp())
+                input_file_fullpath_ = Path(temp_dir_fullpath, input_file_fullpath_.name)
+                shutil.copyfile(str(input_file_fullpath), str(input_file_fullpath_))
+            exit_code = subprocess.check_call([
+                str(self.get_gcomp_file_fullpath()),
+                '-d',
+                '-F',
+                str(input_file_fullpath_),
+                '-DD',
+                str(output_dir_fullpath)
+            ])
+            if exit_code != 0:
+                raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
 
 
 def run(args) -> None:

@@ -34,43 +34,48 @@ class Builder(Processor):
     def run(self, input_dir_fullpath: Path, output_file_fullpath: Path) -> None:
         output_file_fullpath_suffix_lower = output_file_fullpath.suffix.lower()
         if output_file_fullpath_suffix_lower in ['.epf', '.erf']:
+            args_au = [
+                str(self.get_v8_unpack_file_fullpath()),
+                '-B'
+            ]
             if self.unpack_only:
-                exit_code = subprocess.check_call([
-                    str(self.get_v8_unpack_file_fullpath()),
-                    '-B',
-                    str(input_dir_fullpath),
-                    str(output_file_fullpath)
-                ])
+                args_au += [
+                    str(input_dir_fullpath)
+                ]
             else:
                 temp_source_dir_fullpath = Builder.get_temp_source_dir_fullpath(input_dir_fullpath)
-                exit_code = subprocess.check_call([
-                    str(self.get_v8_unpack_file_fullpath()),
-                    '-B',
-                    str(temp_source_dir_fullpath),
-                    str(output_file_fullpath)
-                ])
-                shutil.rmtree(temp_source_dir_fullpath)
+                args_au += [
+                    str(temp_source_dir_fullpath)
+                ]
+            args_au += [
+                str(output_file_fullpath)
+            ]
+            exit_code = subprocess.check_call(args_au)
             if exit_code != 0:
                 raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
         elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
-            with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
-                bat_file.write('@echo off\n')
-                bat_file.write('{0} '.format(self.get_gcomp_file_fullpath()))
-                if output_file_fullpath_suffix_lower == '.ert':
-                    bat_file.write('--external-report ')
-                elif output_file_fullpath_suffix_lower == '.md':
-                    bat_file.write('--meta-data ')
-                bat_file.write('-c -F "{0}" -DD "{1}"\n'.format(
-                    output_file_fullpath,
-                    input_dir_fullpath
-                ))
-                bat_file.close()
-                exit_code = subprocess.check_call(['cmd.exe', '/C', bat_file.name])
-                if exit_code != 0:
-                    raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
-            if bat_file:
-                Path(bat_file.name).unlink()
+            args_au = [
+                str(self.get_gcomp_file_fullpath())
+            ]
+            if output_file_fullpath_suffix_lower == '.ert':
+                args_au += [
+                    '--external-report'
+                ]
+            elif output_file_fullpath_suffix_lower == '.md':
+                args_au += [
+                    '--meta-data'
+                ]
+            args_au += [
+                '-c',
+                '-F',
+                str(output_file_fullpath),
+                '-DD',
+                str(input_dir_fullpath)
+            ]
+            exit_code = subprocess.check_call(args_au)
+            if exit_code != 0:
+                raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
 
 
 def run(args) -> None:

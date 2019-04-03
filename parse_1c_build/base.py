@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-from commons.settings import get_attribute, get_path_attribute, get_settings
+from cjk_commons.settings import get_attribute, get_path_attribute, get_settings
 from parse_1c_build.__about__ import APP_AUTHOR, APP_NAME
 
 

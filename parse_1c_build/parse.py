@@ -6,7 +6,7 @@ import tempfile
 
 import shutil
 
-from commons.settings import get_path_attribute
+from cjk_commons.settings import get_path_attribute
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
 

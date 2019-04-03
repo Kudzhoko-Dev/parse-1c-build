@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 here = Path(__file__).parent
 
@@ -10,13 +10,13 @@ with Path(here, 'parse_1c_build', '__about__.py').open() as f:
     exec(f.read(), about)
 
 setup(
-    name='parse_1c_build',
+    name='parse-1c-build',
     version=about['__version__'],
     description='Parse and build utilities for 1C:Enterprise',
     author='Cujoko',
     author_email='cujoko@gmail.com',
-    url='https://gitlab.com/Cujoko/parse-1c-build',
-    packages=find_packages(),
+    url='https://github.com/Cujoko/parse-1c-build',
+    packages=['parse_1c_build'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -34,7 +34,7 @@ setup(
     },
     license='MIT',
     install_requires=[
-        'commons @ https://gitlab.com/Cujoko/commons/-/archive/master/commons-master.tar.gz',
-        'commons-1c @ https://gitlab.com/Cujoko/commons-1c/-/archive/master/commons-1c-master.tar.gz'
+        'cjk-commons>=3.3.0',
+        'commons-1c>=3.1.0'
     ]
 )

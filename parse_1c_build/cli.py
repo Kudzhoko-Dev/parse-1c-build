@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from argparse import ArgumentParser
 
-from commons.logging_ import add_logging_arguments
+from cjk_commons.logging_ import add_logging_arguments
 from parse_1c_build import __version__, build, parse
 
 

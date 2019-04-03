@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from commons.logging_ import add_loggers
+from cjk_commons.logging_ import add_loggers
 from parse_1c_build import logger as main_logger
 from parse_1c_build.cli import get_argparser
 

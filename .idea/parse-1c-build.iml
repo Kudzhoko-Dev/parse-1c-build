@@ -5,11 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/parse_1c_build" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/.idea" />
-      <excludeFolder url="file://$MODULE_DIR$/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/parse_1c_build.egg-info" />
-      <excludeFolder url="file://$MODULE_DIR$/tests/data" />
-      <excludeFolder url="file://$MODULE_DIR$/tests/htmlcov" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (parse-1c-build)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

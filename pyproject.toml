@@ -1,13 +1,11 @@
 [tool.poetry]
 name = "parse-1c-build"
-version = "5.5.2"
+version = "5.5.3"
 description = "Parse and build utilities for 1C:Enterprise"
 authors = ["Cujoko <cujoko@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/Cujoko/parse-1c-build"
 repository = "https://github.com/Cujoko/parse-1c-build"
-documentation = "https://github.com/Cujoko/parse-1c-build"
 keywords = ["1c", "parse", "build", "v8reader", "v8unpack", "gcomp"]
 classifiers=[
     "Development Status :: 4 - Beta",

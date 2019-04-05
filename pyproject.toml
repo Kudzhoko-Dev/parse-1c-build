@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "parse-1c-build"
-version = "5.5.1"
+version = "5.5.2"
 description = "Parse and build utilities for 1C:Enterprise"
 authors = ["Cujoko <cujoko@gmail.com>"]
 license = "MIT"
@@ -20,7 +20,7 @@ classifiers=[
 ]
 
 [tool.poetry.scripts]
-p1cb = 'parse_1c_build.__main__:run'
+p1cb = "parse_1c_build.__main__:run"
 
 [tool.poetry.dependencies]
 python = "^3.7"

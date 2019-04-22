@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "parse-1c-build"
-version = "5.5.4"
+version = "5.5.5"
 description = "Parse and build utilities for 1C:Enterprise"
 authors = ["Cujoko <cujoko@gmail.com>"]
 license = "MIT"

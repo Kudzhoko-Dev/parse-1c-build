@@ -5,7 +5,7 @@ from cjk_commons.settings import get_attribute, get_path_attribute, get_settings
 from parse_1c_build.__about__ import APP_AUTHOR, APP_NAME
 
 
-class Processor(object):
+class Processor:
     def __init__(self, **kwargs):
         settings_file_path = get_path_attribute(
             kwargs, 'settings_file_path', default_path=Path('settings.yaml'), is_dir=False, check_if_exists=False)

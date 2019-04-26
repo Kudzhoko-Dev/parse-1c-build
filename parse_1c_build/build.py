@@ -38,14 +38,14 @@ class Builder(Processor):
                 str(self.get_v8_unpack_file_fullpath()),
                 '-B'
             ]
-            if self.unpack_only:
-                args_au += [
-                    str(input_dir_fullpath)
-                ]
-            else:
+            if self.use_reader:
                 temp_source_dir_fullpath = Builder.get_temp_source_dir_fullpath(input_dir_fullpath)
                 args_au += [
                     str(temp_source_dir_fullpath)
+                ]
+            else:
+                args_au += [
+                    str(input_dir_fullpath)
                 ]
             args_au += [
                 str(output_file_fullpath)
@@ -86,8 +86,8 @@ def run(args) -> None:
         if args.output is None:
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
-            output_file_fullpath = Path(
-                '{0}.{1}'.format(output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
+            output_file_fullpath = Path('{0}.{1}'.format(output_file_name_and_extension[0],
+                                                         output_file_name_and_extension[2])).absolute()
         else:
             output_file_fullpath = Path(args.output).absolute()
         processor.run(input_dir_fullpath, output_file_fullpath)

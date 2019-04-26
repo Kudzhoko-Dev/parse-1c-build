@@ -1,4 +1,4 @@
-__version__ = '5.5.5'
+__version__ = '5.6.0'
 
 APP_AUTHOR = 'util-1c'
 APP_NAME = 'parse-1c-build'

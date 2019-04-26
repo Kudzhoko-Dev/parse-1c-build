@@ -7,19 +7,19 @@ from parse_1c_build.__about__ import APP_AUTHOR, APP_NAME
 
 class Processor:
     def __init__(self, **kwargs):
-        settings_file_path = get_path_attribute(
-            kwargs, 'settings_file_path', default_path=Path('settings.yaml'), is_dir=False, check_if_exists=False)
+        settings_file_path = get_path_attribute(kwargs, 'settings_file_path', default_path=Path('settings.yaml'),
+                                                is_dir=False, check_if_exists=False)
         self.settings = get_settings(settings_file_path, app_name=APP_NAME, app_author=APP_AUTHOR)
 
-        self.unpack_only = get_attribute(kwargs, 'unpack_only', self.settings, 'unpack_only', default=False)
+        self.use_reader = get_attribute(kwargs, 'use_reader', self.settings, 'use_reader', default=False)
 
     def get_v8_unpack_file_fullpath(self, **kwargs) -> Path:
-        return get_path_attribute(
-            kwargs, 'v8unpack_file_path', self.settings, 'v8unpack_file', Path('V8Unpack/V8Unpack.exe'), False)
+        return get_path_attribute(kwargs, 'v8unpack_file_path', self.settings, 'v8unpack_file',
+                                  Path('V8Unpack/V8Unpack.exe'), False)
 
     def get_gcomp_file_fullpath(self, **kwargs) -> Path:
-        return get_path_attribute(
-            kwargs, 'gcomp_file_path', self.settings, 'gcomp_file', Path('GComp/Release/gcomp.exe'), False)
+        return get_path_attribute(kwargs, 'gcomp_file_path', self.settings, 'gcomp_file',
+                                  Path('GComp/Release/gcomp.exe'), False)
 
 
 def add_generic_arguments(subparser) -> None:
@@ -29,9 +29,9 @@ def add_generic_arguments(subparser) -> None:
         help='Show this help message and exit'
     )
     subparser.add_argument(
-        '-uo', '--unpack-only',
+        '-r', '--use-reader',
         action='store_true',
-        help='Parse or build with V8Unpack only'
+        help='Parse or build with V8Reader'
     )
     # todo Добавить help
     subparser.add_argument(

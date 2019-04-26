@@ -6,8 +6,7 @@ from parse_1c_build import __version__, build, parse
 
 
 def get_argparser() -> ArgumentParser:
-    parser = ArgumentParser(
-        prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
+    parser = ArgumentParser(prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
     parser.add_argument(
         '-h', '--help',
         action='help',

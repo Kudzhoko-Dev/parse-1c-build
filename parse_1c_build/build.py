@@ -35,8 +35,8 @@ class Builder(Processor):
         if output_file_fullpath is None:
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
-            output_file_fullpath = Path('{0}.{1}'.format(output_file_name_and_extension[0],
-                                                         output_file_name_and_extension[2])).absolute()
+            output_file_fullpath = Path(input_dir_fullpath.parent, '{0}.{1}'.format(output_file_name_and_extension[0],
+                output_file_name_and_extension[2])).absolute()
         output_file_fullpath_suffix_lower = output_file_fullpath.suffix.lower()
         if output_file_fullpath_suffix_lower in ['.epf', '.erf']:
             args_au = [

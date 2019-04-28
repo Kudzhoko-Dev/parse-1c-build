@@ -25,8 +25,11 @@ class Parser(Processor):
         return get_path_attribute(kwargs, 'v8reader_file_path', self.settings, 'v8reader_file',
                                   Path('V8Reader/V8Reader.epf'), False)
 
-    def run(self, input_file_fullpath: Path, output_dir_fullpath: Path) -> None:
+    def run(self, input_file_fullpath: Path, output_dir_fullpath: Path = None) -> None:
         input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
+        if output_dir_fullpath is None:
+            output_dir_fullpath = Path(input_file_fullpath.parent,
+                                       input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
         if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
             if self.use_reader:
                 with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
@@ -73,11 +76,7 @@ def run(args) -> None:
         processor = Parser()
         # Args
         input_file_fullpath = Path(args.input[0]).absolute()
-        if args.output is None:
-            output_dir_fullpath = Path(input_file_fullpath.parent,
-                                       input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
-        else:
-            output_dir_fullpath = Path(args.output).absolute()
+        output_dir_fullpath = None if args.output is None else Path(args.output).absolute()
         processor.run(input_file_fullpath, output_dir_fullpath)
     except Exception as e:
         logger.exception(e)

@@ -12,7 +12,7 @@ def test(request):
     return get_argparser()
 
 
-def test_parse(test, tmpdir) -> None:
+def test_parse(test, tmpdir):
     parser = test
 
     temp_dir_fullpath = Path(tmpdir)

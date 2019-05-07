@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 
 import shutil
@@ -45,30 +47,34 @@ class Parser(Processor):
                     ))
                 Path(bat_file.name).unlink()
             else:
-                exit_code = subprocess.check_call([
+                args_au = [
                     str(self.get_v8_unpack_file_fullpath()),
                     '-P',
                     str(input_file_fullpath),
                     str(output_dir_fullpath)
-                ])
-                if exit_code != 0:
-                    raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
+                ]
+                exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+                if exit_code:
+                    raise Exception('parsing \'{0}\' failed'.format(input_file_fullpath), exit_code)
+            logger.info('\'{0}\' parsed to \'{1}\''.format(input_file_fullpath, output_dir_fullpath))
         elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
             input_file_fullpath_ = input_file_fullpath  # todo
             if input_file_fullpath_suffix_lower == '.md':
                 temp_dir_fullpath = Path(tempfile.mkdtemp())
                 input_file_fullpath_ = Path(temp_dir_fullpath, input_file_fullpath_.name)
                 shutil.copyfile(str(input_file_fullpath), str(input_file_fullpath_))
-            exit_code = subprocess.check_call([
+            args_au = [
                 str(self.get_gcomp_file_fullpath()),
                 '-d',
                 '-F',
                 str(input_file_fullpath_),
                 '-DD',
                 str(output_dir_fullpath)
-            ])
-            if exit_code != 0:
-                raise Exception('Parsing \'{0}\' is failed'.format(input_file_fullpath))
+            ]
+            exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+            if exit_code:
+                raise Exception('parsing \'{0}\' failed'.format(input_file_fullpath), exit_code)
+            logger.info('\'{0}\' parsed to \'{1}\''.format(input_file_fullpath, output_dir_fullpath))
 
 
 def run(args) -> None:
@@ -80,6 +86,7 @@ def run(args) -> None:
         processor.run(input_file_fullpath, output_dir_fullpath)
     except Exception as e:
         logger.exception(e)
+        sys.exit(1)
 
 
 def add_subparser(subparsers) -> None:

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 
 import shutil
@@ -55,9 +57,10 @@ class Builder(Processor):
             args_au += [
                 str(output_file_fullpath)
             ]
-            exit_code = subprocess.check_call(args_au)
-            if exit_code != 0:
-                raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
+            exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+            if exit_code:
+                raise Exception('building \'{0}\' failed'.format(output_file_fullpath), exit_code)
+            logger.info('\'{0}\' built from \'{1}\''.format(output_file_fullpath, input_dir_fullpath))
         elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             args_au = [
@@ -78,9 +81,10 @@ class Builder(Processor):
                 '-DD',
                 str(input_dir_fullpath)
             ]
-            exit_code = subprocess.check_call(args_au)
-            if exit_code != 0:
-                raise Exception('Building \'{0}\' is failed'.format(output_file_fullpath))
+            exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+            if exit_code:
+                raise Exception('building \'{0}\' failed'.format(output_file_fullpath), exit_code)
+            logger.info('\'{0}\' built from \'{1}\''.format(output_file_fullpath, input_dir_fullpath))
 
 
 def run(args) -> None:
@@ -92,6 +96,7 @@ def run(args) -> None:
         processor.run(input_dir_fullpath, output_file_fullpath)
     except Exception as e:
         logger.exception(e)
+        sys.exit(1)
 
 
 def add_subparser(subparsers) -> None:

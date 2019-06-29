@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 
+from loguru import logger
 import shutil
 
 from cjk_commons.settings import get_path_attribute
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
-
-logger = logging.getLogger(__name__)
 
 
 class Parser(Processor):

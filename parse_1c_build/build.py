@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 
+from loguru import logger
 import shutil
 
 from parse_1c_build.base import Processor, add_generic_arguments
-
-logger = logging.getLogger(__name__)
 
 
 class Builder(Processor):

@@ -12,18 +12,24 @@ from cjk_commons.settings import get_path_attribute
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
 
+logger.enable('cjk_commons')
+logger.enable('commons_1c')
+
 
 class Parser(Processor):
     def get_1c_exe_file_fullpath(self, **kwargs) -> Path:
-        return get_path_attribute(kwargs, '1c_file_path', default_path=platform_.get_last_1c_exe_file_fullpath(),
-                                  is_dir=False)
+        result = get_path_attribute(kwargs, '1c_file_path', default_path=platform_.get_last_1c_exe_file_fullpath(),
+                                    is_dir=False)
+        return result
 
     def get_ib_dir_fullpath(self, **kwargs) -> Path:
-        return get_path_attribute(kwargs, 'ib_dir_path', self.settings, 'ib_dir', Path('IB'), create_dir=False)
+        result = get_path_attribute(kwargs, 'ib_dir_path', self.settings, 'ib_dir', Path('IB'), create_dir=False)
+        return result
 
     def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
-        return get_path_attribute(kwargs, 'v8reader_file_path', self.settings, 'v8reader_file',
-                                  Path('V8Reader/V8Reader.epf'), False)
+        result = get_path_attribute(kwargs, 'v8reader_file_path', self.settings, 'v8reader_file',
+                                    Path('V8Reader/V8Reader.epf'), False)
+        return result
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path = None) -> None:
         input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "parse-1c-build"
-version = "5.8.1"
+version = "5.9.0"
 description = "Parse and build utilities for 1C:Enterprise"
 authors = ["Cujoko <cujoko@gmail.com>"]
 license = "MIT"
@@ -24,6 +24,7 @@ p1cb = "parse_1c_build.__main__:run"
 python = "^3.7"
 cjk-commons = "^3.3"
 commons-1c = "^3.1"
+loguru = "^0.3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.4"

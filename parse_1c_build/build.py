@@ -91,7 +91,7 @@ class Builder(Processor):
 def run(args) -> None:
     logger.enable('cjk-commons')
     logger.enable('commons-1c')
-    logger.enable('parse-1c-build')
+    logger.enable(__name__)
     try:
         processor = Builder()
         # Args

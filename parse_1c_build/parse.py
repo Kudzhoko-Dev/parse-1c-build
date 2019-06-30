@@ -12,8 +12,7 @@ from cjk_commons.settings import get_path_attribute
 from commons_1c import platform_
 from parse_1c_build.base import Processor, add_generic_arguments
 
-logger.enable('cjk_commons')
-logger.enable('commons_1c')
+logger.disable(__name__)
 
 
 class Parser(Processor):
@@ -82,6 +81,9 @@ class Parser(Processor):
 
 
 def run(args) -> None:
+    logger.enable('cjk-commons')
+    logger.enable('commons-1c')
+    logger.enable('parse-1c-build')
     try:
         processor = Parser()
         # Args

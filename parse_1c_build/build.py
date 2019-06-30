@@ -10,6 +10,8 @@ import shutil
 
 from parse_1c_build.base import Processor, add_generic_arguments
 
+logger.disable(__name__)
+
 
 class Builder(Processor):
     @staticmethod
@@ -36,7 +38,8 @@ class Builder(Processor):
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
             output_file_fullpath = Path(input_dir_fullpath.parent, '{0}.{1}'.format(output_file_name_and_extension[0],
-                output_file_name_and_extension[2])).absolute()
+                                                                                    output_file_name_and_extension[
+                                                                                        2])).absolute()
         output_file_fullpath_suffix_lower = output_file_fullpath.suffix.lower()
         if output_file_fullpath_suffix_lower in ['.epf', '.erf']:
             args_au = [
@@ -86,6 +89,9 @@ class Builder(Processor):
 
 
 def run(args) -> None:
+    logger.enable('cjk-commons')
+    logger.enable('commons-1c')
+    logger.enable('parse-1c-build')
     try:
         processor = Builder()
         # Args

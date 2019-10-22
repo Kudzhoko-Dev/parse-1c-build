@@ -37,9 +37,19 @@ class Builder(Processor):
         if output_file_fullpath is None:
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
-            output_file_fullpath = Path(input_dir_fullpath.parent, '{0}.{1}'.format(output_file_name_and_extension[0],
-                                                                                    output_file_name_and_extension[
-                                                                                        2])).absolute()
+            output_file_fullpath = Path(
+                input_dir_fullpath.parent, '{}.{}'.format(
+                    output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
+        if output_file_fullpath.is_file():
+            # Файл уже существует. Нужно переименовать
+            n = 1
+            while True:
+                bak_file_fullpath = Path(output_file_fullpath.parent, output_file_fullpath.name + '.' + str(n) + '.bak')
+                if bak_file_fullpath.is_file():
+                    n += 1
+                else:
+                    break
+            output_file_fullpath.rename(bak_file_fullpath)
         output_file_fullpath_suffix_lower = output_file_fullpath.suffix.lower()
         if output_file_fullpath_suffix_lower in ['.epf', '.erf']:
             args_au = [
@@ -60,8 +70,8 @@ class Builder(Processor):
             ]
             exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
             if exit_code:
-                raise Exception('building \'{0}\' failed'.format(output_file_fullpath), exit_code)
-            logger.info('\'{0}\' built from \'{1}\''.format(output_file_fullpath, input_dir_fullpath))
+                raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
+            logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
         elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             args_au = [
@@ -84,8 +94,8 @@ class Builder(Processor):
             ]
             exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
             if exit_code:
-                raise Exception('building \'{0}\' failed'.format(output_file_fullpath), exit_code)
-            logger.info('\'{0}\' built from \'{1}\''.format(output_file_fullpath, input_dir_fullpath))
+                raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
+            logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
 
 
 def run(args) -> None:

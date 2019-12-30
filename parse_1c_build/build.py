@@ -33,14 +33,15 @@ class Builder(Processor):
                     shutil.copy(old_fullpath, new_fullpath)
         return temp_source_dir_fullpath
 
-    def run(self, input_dir_fullpath: Path, output_file_fullpath: Path = None) -> None:
+    def run(self, input_dir_fullpath: Path, output_file_fullpath: Path = None, 
+        do_not_backup: bool = False) -> None:
         if output_file_fullpath is None:
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
             output_file_fullpath = Path(
                 input_dir_fullpath.parent, '{}.{}'.format(
                     output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
-        if output_file_fullpath.is_file():
+        if not do_not_backup and output_file_fullpath.is_file():
             # Файл уже существует. Нужно переименовать
             n = 1
             while True:
@@ -107,7 +108,7 @@ def run(args) -> None:
         # Args
         input_dir_fullpath = Path(args.input[0]).absolute()
         output_file_fullpath = None if args.output is None else Path(args.output).absolute()
-        processor.run(input_dir_fullpath, output_file_fullpath)
+        processor.run(input_dir_fullpath, output_file_fullpath, args.do_not_backup)
     except Exception as e:
         logger.exception(e)
         sys.exit(1)
@@ -123,3 +124,8 @@ def add_subparser(subparsers) -> None:
     )
     subparser.set_defaults(func=run)
     add_generic_arguments(subparser)
+    subparser.add_argument(
+        '-x', '--do-not-backup',
+        action='store_true',
+        help='Do not backup 1C-file before building'
+    )

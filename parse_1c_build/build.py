@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
 
 from loguru import logger
-import shutil
 
 from parse_1c_build.base import Processor, add_generic_arguments
 
@@ -38,9 +38,8 @@ class Builder(Processor):
         if output_file_fullpath is None:
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
-            output_file_fullpath = Path(
-                input_dir_fullpath.parent, '{}.{}'.format(
-                    output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
+            output_file_fullpath = Path(input_dir_fullpath.parent, '{}.{}'.format(
+                output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
         if not do_not_backup and output_file_fullpath.is_file():
             # Файл уже существует. Нужно переименовать
             n = 1
@@ -73,7 +72,7 @@ class Builder(Processor):
             if exit_code:
                 raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
             logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
-        elif output_file_fullpath_suffix_lower in ['.ert', '.md']:
+        elif output_file_fullpath_suffix_lower in ['.md', '.ert']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             args_au = [
                 str(self.get_gcomp_file_fullpath())
@@ -97,14 +96,18 @@ class Builder(Processor):
             if exit_code:
                 raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
             logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
+        else:
+            raise Exception('Undefined output file type')
 
 
 def run(args) -> None:
     logger.enable('cjk-commons')
     logger.enable('commons-1c')
     logger.enable(__name__)
+
     try:
         processor = Builder()
+
         # Args
         input_dir_fullpath = Path(args.input[0]).absolute()
         output_file_fullpath = None if args.output is None else Path(args.output).absolute()

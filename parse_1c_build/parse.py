@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
 
 from loguru import logger
-import shutil
 
 from cjk_commons.settings import get_path_attribute
 from commons_1c import platform_
@@ -18,7 +18,7 @@ logger.disable(__name__)
 class Parser(Processor):
     def get_1c_exe_file_fullpath(self, **kwargs) -> Path:
         result = get_path_attribute(kwargs, '1c_file_path', default_path=platform_.get_last_1c_exe_file_fullpath(),
-                                    is_dir=False)
+            is_dir=False)
         return result
 
     def get_ib_dir_fullpath(self, **kwargs) -> Path:
@@ -27,14 +27,13 @@ class Parser(Processor):
 
     def get_v8_reader_file_fullpath(self, **kwargs) -> Path:
         result = get_path_attribute(kwargs, 'v8reader_file_path', self.settings, 'v8reader_file',
-                                    Path('V8Reader/V8Reader.epf'), False)
+            Path('V8Reader/V8Reader.epf'), False)
         return result
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path = None) -> None:
         input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
         if output_dir_fullpath is None:
-            output_dir_fullpath = Path(input_file_fullpath.parent,
-                                       input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
+            output_dir_fullpath = Path(input_file_fullpath.parent, input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
         if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
             if self.use_reader:
                 with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
@@ -60,7 +59,7 @@ class Parser(Processor):
                 if exit_code:
                     raise Exception('parsing \'{0}\' failed'.format(input_file_fullpath), exit_code)
             logger.info('\'{0}\' parsed to \'{1}\''.format(input_file_fullpath, output_dir_fullpath))
-        elif input_file_fullpath_suffix_lower in ['.ert', '.md']:
+        elif input_file_fullpath_suffix_lower in ['.md', '.ert']:
             input_file_fullpath_ = input_file_fullpath  # todo
             if input_file_fullpath_suffix_lower == '.md':
                 temp_dir_fullpath = Path(tempfile.mkdtemp())
@@ -78,14 +77,18 @@ class Parser(Processor):
             if exit_code:
                 raise Exception('parsing \'{0}\' failed'.format(input_file_fullpath), exit_code)
             logger.info('\'{0}\' parsed to \'{1}\''.format(input_file_fullpath, output_dir_fullpath))
+        else:
+            raise Exception('Undefined input file type')
 
 
 def run(args) -> None:
     logger.enable('cjk-commons')
     logger.enable('commons-1c')
     logger.enable(__name__)
+
     try:
         processor = Parser()
+
         # Args
         input_file_fullpath = Path(args.input[0]).absolute()
         output_dir_fullpath = None if args.output is None else Path(args.output).absolute()

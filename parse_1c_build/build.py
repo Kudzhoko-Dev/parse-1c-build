@@ -33,13 +33,21 @@ class Builder(Processor):
                     shutil.copy(old_fullpath, new_fullpath)
         return temp_source_dir_fullpath
 
-    def run(self, input_dir_fullpath: Path, output_file_fullpath: Path = None, 
+    def run(self, input_dir_fullpath: Path, output_fullpath: Path = None,
         do_not_backup: bool = False) -> None:
-        if output_file_fullpath is None:
+        if output_fullpath is None or output_fullpath.is_dir():
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')
-            output_file_fullpath = Path(input_dir_fullpath.parent, '{}.{}'.format(
+
+            if output_fullpath is None:
+                parent = input_dir_fullpath.parent
+            else:
+                parent = output_fullpath
+
+            output_file_fullpath = Path(parent, '{}.{}'.format(
                 output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
+        else:
+            output_file_fullpath = output_fullpath
         if not do_not_backup and output_file_fullpath.is_file():
             # Файл уже существует. Нужно переименовать
             n = 1

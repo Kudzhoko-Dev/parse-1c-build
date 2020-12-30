@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-from pathlib import Path
 import shutil
 import subprocess
-import sys
 import tempfile
+from pathlib import Path
 
+import sys
 from loguru import logger
 
 from parse_1c_build.base import Processor, add_generic_arguments
@@ -44,8 +44,8 @@ class Builder(Processor):
             else:
                 parent = output_fullpath
 
-            output_file_fullpath = Path(parent, '{}.{}'.format(
-                output_file_name_and_extension[0], output_file_name_and_extension[2])).absolute()
+            output_file_fullpath = Path(parent,
+                                        f'{output_file_name_and_extension[0]}.{output_file_name_and_extension[2]}').absolute()
         else:
             output_file_fullpath = output_fullpath
         if not do_not_backup and output_file_fullpath.is_file():
@@ -78,8 +78,8 @@ class Builder(Processor):
             ]
             exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
             if exit_code:
-                raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
-            logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
+                raise Exception(f'building \'{output_file_fullpath}\' failed', exit_code)
+            logger.info(f'\'{output_file_fullpath}\' built from \'{input_dir_fullpath}\'')
         elif output_file_fullpath_suffix_lower in ['.md', '.ert']:
             # todo Может быть такое, что md-файл будет занят, тогда при его записи возникнет ошибка
             args_au = [
@@ -102,8 +102,8 @@ class Builder(Processor):
             ]
             exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
             if exit_code:
-                raise Exception('building \'{}\' failed'.format(output_file_fullpath), exit_code)
-            logger.info('\'{}\' built from \'{}\''.format(output_file_fullpath, input_dir_fullpath))
+                raise Exception(f'building \'{output_file_fullpath}\' failed', exit_code)
+            logger.info(f'\'{output_file_fullpath}\' built from \'{input_dir_fullpath}\'')
         else:
             raise Exception('Undefined output file type')
 

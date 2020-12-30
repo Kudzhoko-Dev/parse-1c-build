@@ -18,7 +18,7 @@ def test_build_1(test, tmpdir):
     parser = test
 
     temp_file_fullpath = Path(tmpdir.join('test.epf'))
-    args = parser.parse_args('build tests/data/test_epf_src {0}'.format(temp_file_fullpath).split())
+    args = parser.parse_args(f'build tests/data/test_epf_src {temp_file_fullpath}'.split())
     build_run(args)
 
     assert temp_file_fullpath.exists()
@@ -28,7 +28,7 @@ def test_build_2(test, tmpdir):
     parser = test
 
     temp_file_fullpath = Path(tmpdir.join('test.erf'))
-    args = parser.parse_args('build tests/data/test_epf_src {0}'.format(temp_file_fullpath).split())
+    args = parser.parse_args(f'build tests/data/test_epf_src {temp_file_fullpath}'.split())
     build_run(args)
 
     assert temp_file_fullpath.exists()
@@ -39,7 +39,7 @@ def test_build_3(test, tmpdir):
         parser = test
 
         temp_file_fullpath = Path(tmpdir.join('test'))
-        args = parser.parse_args('build tests/data/test_epf_src {0}'.format(temp_file_fullpath).split())
+        args = parser.parse_args(f'build tests/data/test_epf_src {temp_file_fullpath}'.split())
         build_run(args)
 
         assert e.type == SystemExit

@@ -109,8 +109,8 @@ class Builder(Processor):
 
 
 def run(args) -> None:
-    logger.enable('cjk-commons')
-    logger.enable('commons-1c')
+    logger.enable('cjk_commons')
+    logger.enable('commons_1c')
     logger.enable(__name__)
 
     try:

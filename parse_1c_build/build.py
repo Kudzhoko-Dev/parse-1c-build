@@ -35,6 +35,8 @@ class Builder(Processor):
 
     def run(self, input_dir_fullpath: Path, output_fullpath: Path = None,
         do_not_backup: bool = False) -> None:
+        """Собирает обработку из исходных файлов"""
+        
         if output_fullpath is None or output_fullpath.is_dir():
             output_file_name_and_extension_str = input_dir_fullpath.name.rpartition('_')[0]
             output_file_name_and_extension = output_file_name_and_extension_str.rpartition('_')

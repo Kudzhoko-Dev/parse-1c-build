@@ -31,6 +31,8 @@ class Parser(Processor):
         return result
 
     def run(self, input_file_fullpath: Path, output_dir_fullpath: Path = None) -> None:
+        """Разбирает обработку на исходные файлы"""
+        
         input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
         if output_dir_fullpath is None:
             output_dir_fullpath = Path(input_file_fullpath.parent, input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')

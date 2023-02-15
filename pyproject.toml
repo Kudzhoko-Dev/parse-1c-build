@@ -1,14 +1,6 @@
 [tool.poetry]
-name = "parse-1c-build"
-version = "5.15.1"
-description = "Parse and build utilities for 1C:Enterprise"
 authors = ["Cujoko <cujoko@gmail.com>"]
-readme = "README.md"
-packages = [{include = "parse_1c_build"}]
-license = "MIT"
-repository = "https://github.com/Cujoko/parse-1c-build"
-keywords = ["1c", "parse", "build", "v8reader", "v8unpack", "gcomp"]
-classifiers=[
+classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -19,15 +11,23 @@ classifiers=[
     "Topic :: Software Development",
     "Topic :: Utilities"
 ]
+description = "Parse and build utilities for 1C:Enterprise"
+keywords = ["1c", "parse", "build", "v8reader", "v8unpack", "gcomp"]
+license = "MIT"
+name = "parse-1c-build"
+packages = [{include = "parse_1c_build"}]
+readme = "README.md"
+repository = "https://github.com/Cujoko/parse-1c-build"
+version = "5.15.1"
 
 [tool.poetry.scripts]
 p1cb = "parse_1c_build.__main__:run"
 
 [tool.poetry.dependencies]
-python = "^3.9"
 cjk-commons = "^3.6.1"
 commons-1c = "^3.6.0"
 loguru = "^0.6.0"
+python = "^3.9"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.16.2"
@@ -35,5 +35,5 @@ pytest = "^7.2.1"
 rope = "^1.7.0"
 
 [build-system]
-requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]

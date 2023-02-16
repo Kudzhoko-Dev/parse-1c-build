@@ -24,8 +24,8 @@ version = "5.15.1"
 p1cb = "parse_1c_build.__main__:run"
 
 [tool.poetry.dependencies]
-cjk-commons = "^3.6.1"
-commons-1c = "^3.6.0"
+cjk-commons = "^3.6.2"
+commons-1c = "^3.6.1"
 loguru = "^0.6.0"
 python = "^3.9"
 

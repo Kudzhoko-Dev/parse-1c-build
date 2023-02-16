@@ -1,0 +1,31 @@
+name: Upload Python Package
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.11'
+    - name: Set up Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+    - name: Install dependencies
+      run: |
+        poetry install
+    - name: Build package
+      run: |
+        poetry build
+    - name: Publish package
+      run: |
+        poetry publish --username ${{vars.PYPI_USERNAME}} --password ${{secrets.PYPI_PASSWORD}}

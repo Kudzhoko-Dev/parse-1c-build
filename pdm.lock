@@ -8,7 +8,7 @@ summary = "A small Python module for determining appropriate platform-specific d
 
 [[package]]
 name = "cjk-commons"
-version = "3.6.3"
+version = "3.6.4"
 requires_python = ">=3.10"
 summary = "Commons"
 dependencies = [
@@ -26,12 +26,12 @@ summary = "Cross-platform colored terminal text."
 
 [[package]]
 name = "commons-1c"
-version = "3.6.3"
+version = "3.6.4"
 requires_python = ">=3.10"
 summary = "Commons for 1C:Enterprise"
 dependencies = [
     "appdirs==1.4.4",
-    "cjk-commons==3.6.3",
+    "cjk-commons<4.0.0,>=3.6.3",
     "loguru==0.6.0",
 ]
 
@@ -67,24 +67,24 @@ dependencies = [
 
 [metadata]
 lock_version = "4.1"
-content_hash = "sha256:38c3dc74638f5324fb12dc131260189be75aba858993a475e128f494bc6821f0"
+content_hash = "sha256:d7ceff9b19717565f588b7e8ca89295d499bd552461db0dcf82b69ec8fa16679"
 
 [metadata.files]
 "appdirs 1.4.4" = [
     {url = "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {url = "https://files.pythonhosted.org/packages/d7/d8/05696357e0311f5b5c316d7b95f46c669dd9c15aaeecbb48c7d0aeb88c40/appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
-"cjk-commons 3.6.3" = [
-    {url = "https://files.pythonhosted.org/packages/cf/9b/6d1fbdaae1342556354419f8ca2757b9414a6fd24aafdf65b85d3cf47e0d/cjk-commons-3.6.3.tar.gz", hash = "sha256:2c87bb734c2768bcd28d0aefbe67d420ea4c89c9362b3e5b6c56301e2b0d58d6"},
-    {url = "https://files.pythonhosted.org/packages/ec/2e/b35b555a2c2ae8ed77e7c9494a7a334650f9fd0bc601445dc451edf1eac3/cjk_commons-3.6.3-py3-none-any.whl", hash = "sha256:87ad7b96811ad8e11ade7a9c687e603fc1c1283cfc3f5e81cbb6cec37a9526ec"},
+"cjk-commons 3.6.4" = [
+    {url = "https://files.pythonhosted.org/packages/0c/de/cc4f0cddb7ad7adad06779191e9e1ad894b16b06931269f4134fb2bdbbc9/cjk-commons-3.6.4.tar.gz", hash = "sha256:933cb9a5b6b42fd572888ba661252390df4d6dc025785fb77ff11ebf4965dac4"},
+    {url = "https://files.pythonhosted.org/packages/e4/fa/d7feedd8a7904be96abd2902e7d9661dc4540ba4a0f523e6bd4dccc29e5f/cjk_commons-3.6.4-py3-none-any.whl", hash = "sha256:b543da491b4840ec391b8abe4656e5d9777330aa5b85fe2a8283c2d6df6a8b0c"},
 ]
 "colorama 0.4.6" = [
     {url = "https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {url = "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-"commons-1c 3.6.3" = [
-    {url = "https://files.pythonhosted.org/packages/01/a1/06bdd4c759b8f984e34f736e6daff88491b326bc126ac87968da0e23b17f/commons-1c-3.6.3.tar.gz", hash = "sha256:54f6ca6b05cd93cfe889929d9375506364c8401846403949a7f9d8920e9729eb"},
-    {url = "https://files.pythonhosted.org/packages/30/9b/96eba590a6bb789652795e5552c9ed21af3a4f5f0d120cd52625579515f1/commons_1c-3.6.3-py3-none-any.whl", hash = "sha256:438b5d2b1688fec04371780bad321e714ebb091d9d75273990f1c8cb08b9a16b"},
+"commons-1c 3.6.4" = [
+    {url = "https://files.pythonhosted.org/packages/b8/36/f7002d1fb266ff9f7c5f00529eb07f6ecc2ba124c14b3de16142b999104d/commons_1c-3.6.4-py3-none-any.whl", hash = "sha256:6188781717a6d48382eb8cc9d50bac6373359e6970bba2138bf10eb7310b2e0a"},
+    {url = "https://files.pythonhosted.org/packages/ff/34/36ca516ebee42bcafdb0636ffa544273178d29e7dd4c4761d6d8a16a3d56/commons-1c-3.6.4.tar.gz", hash = "sha256:8d65b2154ddd856387424a71d518fe5bcb5542b04f5a8609852fd6fa8fbda851"},
 ]
 "loguru 0.6.0" = [
     {url = "https://files.pythonhosted.org/packages/75/1f/d3818863e4be96bd641c4643c535a98f0fa2a12efa7c8ba35f763fa778ee/loguru-0.6.0.tar.gz", hash = "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c"},

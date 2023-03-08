@@ -12,20 +12,18 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
+    - 
+      uses: actions/checkout@v3
+    - 
+      name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: '3.11'
-    - name: Set up Poetry
+    - 
+      name: Set up PDM
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-    - name: Install dependencies
+        curl -sSL https://raw.githubusercontent.com/pdm-project/pdm/main/install-pdm.py | python3 -
+    - 
+      name: Publish package
       run: |
-        poetry install
-    - name: Build package
-      run: |
-        poetry build
-    - name: Publish package
-      run: |
-        poetry publish --username ${{vars.PYPI_USERNAME}} --password ${{secrets.PYPI_PASSWORD}}
+        pdm publish --username ${{vars.PYPI_USERNAME}} --password ${{secrets.PYPI_PASSWORD}}

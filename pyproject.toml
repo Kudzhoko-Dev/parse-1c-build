@@ -1,4 +1,6 @@
-[tool.pdm]
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 authors = [
@@ -15,8 +17,8 @@ classifiers = [
     "Topic :: Utilities"
 ]
 dependencies = [
-    "cjk-commons==3.6.3",
-    "commons-1c==3.6.3",
+    "cjk-commons>=3.6.3,<4.0.0",
+    "commons-1c>=3.6.3,<4.0.0",
     "loguru==0.6.0",
 ]
 description = "Parse and build utilities for 1C:Enterprise"
@@ -25,11 +27,12 @@ license = {text = "MIT"}
 name = "parse-1c-build"
 readme = "README.md"
 requires-python = ">=3.10"
-version = "5.15.2"
-
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
+version = "5.15.3"
 
 [project.scripts]
 p1cb = "parse_1c_build.__main__:run"
+
+[project.urls]
+repository = "https://github.com/Cujoko-Dev/parse-1c-build"
+
+[tool.pdm]

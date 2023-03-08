@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 
 from cjk_commons.logging_ import add_logging_arguments
+
 from parse_1c_build import __version__, build, parse
 
 

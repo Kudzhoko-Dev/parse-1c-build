@@ -2,10 +2,10 @@
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
-import sys
 from loguru import logger
 
 from parse_1c_build.base import Processor, add_generic_arguments

@@ -2,6 +2,7 @@
 import sys
 
 from cjk_commons.logging_ import add_loggers
+
 from parse_1c_build import logger
 from parse_1c_build.cli import get_argparser
 

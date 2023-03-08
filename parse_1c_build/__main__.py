@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from parse_1c_build.core import run
 

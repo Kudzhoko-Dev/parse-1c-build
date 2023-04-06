@@ -34,8 +34,10 @@ class Parser(Processor):
         """Разбирает обработку на исходные файлы"""
         
         input_file_fullpath_suffix_lower = input_file_fullpath.suffix.lower()
+        
         if output_dir_fullpath is None:
             output_dir_fullpath = Path(input_file_fullpath.parent, input_file_fullpath.stem + '_' + input_file_fullpath.suffix[1:] + '_src')
+            
         if input_file_fullpath_suffix_lower in ['.epf', '.erf']:
             if self.use_reader:
                 with tempfile.NamedTemporaryFile('w', suffix='.bat', delete=False, encoding='cp866') as bat_file:
@@ -45,6 +47,7 @@ class Parser(Processor):
 
                     bat_file.write(
                         f'"{self.get_1c_exe_file_fullpath()}" /F "{self.get_ib_dir_fullpath()}" /DisableStartupMessages /Execute "{self.get_v8_reader_file_fullpath()}" {command}')
+                    
                 Path(bat_file.name).unlink()
             else:
                 args_au = [
@@ -54,15 +57,19 @@ class Parser(Processor):
                     str(output_dir_fullpath)
                 ]
                 exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+                
                 if exit_code:
                     raise Exception(f'parsing \'{input_file_fullpath}\' failed', exit_code)
+                
             logger.info(f'\'{input_file_fullpath}\' parsed to \'{output_dir_fullpath}\'')
         elif input_file_fullpath_suffix_lower in ['.md', '.ert']:
             input_file_fullpath_ = input_file_fullpath  # todo
+            
             if input_file_fullpath_suffix_lower == '.md':
                 temp_dir_fullpath = Path(tempfile.mkdtemp())
                 input_file_fullpath_ = Path(temp_dir_fullpath, input_file_fullpath_.name)
                 shutil.copyfile(str(input_file_fullpath), str(input_file_fullpath_))
+                
             args_au = [
                 str(self.get_gcomp_file_fullpath()),
                 '-d',
@@ -71,9 +78,12 @@ class Parser(Processor):
                 '-DD',
                 str(output_dir_fullpath)
             ]
+            
             exit_code = subprocess.check_call(args_au, stdout=open(os.devnull, 'w'))
+            
             if exit_code:
                 raise Exception(f'parsing \'{input_file_fullpath}\' failed', exit_code)
+            
             logger.info(f'\'{input_file_fullpath}\' parsed to \'{output_dir_fullpath}\'')
         else:
             raise Exception('Undefined input file type')

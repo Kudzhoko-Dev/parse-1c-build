@@ -7,20 +7,30 @@ from parse_1c_build import __version__, build, parse
 
 
 def get_argparser() -> ArgumentParser:
-    parser = ArgumentParser(prog='p1cb', description='Parse and build utilities for 1C:Enterprise', add_help=False)
-    parser.add_argument(
-        '-h', '--help',
-        action='help',
-        help='Show this help message and exit'
+    parser = ArgumentParser(
+        add_help=False,
+        description="Parse and build utilities for 1C:Enterprise",
+        prog="p1cb",
     )
     parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version=f'%(prog)s, ver. {__version__}',
-        help='Show version'
+        "-v",
+        "--version",
+        action="version",
+        version=f"%(prog)s, ver. {__version__}",
+        help="Show version",
     )
+    parser.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        help="Show this help message and exit",
+    )
+
     add_logging_arguments(parser)
-    subparsers = parser.add_subparsers(dest='subparser_name')
+
+    subparsers = parser.add_subparsers(dest="subparser_name")
+
     build.add_subparser(subparsers)
     parse.add_subparser(subparsers)
+
     return parser

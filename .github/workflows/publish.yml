@@ -18,7 +18,7 @@ jobs:
       name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.11'
+        python-version: '3.12'
     - 
       name: Set up PDM
       run: |
@@ -26,4 +26,4 @@ jobs:
     - 
       name: Publish package
       run: |
-        pdm publish --username ${{vars.PYPI_USERNAME}} --password ${{secrets.PYPI_PASSWORD}}
+        pdm publish --username __token__ --password ${{secrets.PYPI_API_TOKEN}}
